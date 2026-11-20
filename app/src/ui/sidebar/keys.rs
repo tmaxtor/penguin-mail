@@ -3,8 +3,9 @@
 //! The list is one Tab stop, as GNOME's sidebars are: Tab and Shift+Tab
 //! leave it, the arrows move the focus between the rows a person can act
 //! on, and moving opens nothing. Enter or Space opens the mailbox under
-//! the focus, and the Menu key or Shift+F10 opens its menu. GTK's list
-//! would select, and so load, every row the focus passed, and would take
+//! the focus or toggles its heading. The Menu key or Shift+F10 opens a
+//! row's menu. GTK's list would select, and so load, every row the focus
+//! passed, and would take
 //! one Tab per row, about 70 with six accounts.
 
 use gtk::gdk;
@@ -16,7 +17,7 @@ pub enum ListKey {
     Leave { forward: bool },
     /// Move the focus this many reachable rows down, or up when negative.
     Step(i32),
-    /// Open the mailbox under the focus.
+    /// Open the focused mailbox or toggle the focused heading.
     Open,
     /// Open the focused row's menu: its options button's, or the one a
     /// right click opens.
@@ -74,7 +75,7 @@ pub fn list_key(key: gdk::Key, state: gdk::ModifierType) -> Option<ListKey> {
 pub struct Row {
     pub shown: bool,
     pub sensitive: bool,
-    /// The row opens a mailbox or an account: it is selectable or
+    /// The row opens a mailbox or toggles a heading: it is selectable or
     /// activatable.
     pub opens: bool,
     /// The row is a server folder that holds only folders. It opens
@@ -83,7 +84,7 @@ pub struct Row {
 }
 
 /// Whether the arrows stop on `row`: a shown row a person can act on,
-/// which leaves out section titles.
+/// which leaves out headings that only label a section.
 pub fn reachable(row: Row) -> bool {
     row.shown && row.sensitive && (row.opens || row.group)
 }
@@ -99,9 +100,7 @@ pub fn on_enter(row: Row) -> Option<ListKey> {
 }
 
 /// The row the focus moves to from `from` by `step`, among rows whose
-/// `reachable` flag says a person can act on them (a shown mailbox or
-/// account heading, not a section title or a hidden row). Stays put at
-/// either end.
+/// `reachable` flag says a person can act on them. Stays put at either end.
 pub fn step_to(reachable: &[bool], from: usize, step: i32) -> Option<usize> {
     let mut at = from;
     let mut left = step.unsigned_abs();
@@ -219,11 +218,12 @@ mod tests {
     }
 
     #[test]
-    fn a_step_skips_section_titles_and_hidden_rows() {
-        // All Inboxes, Flagged, "Mailboxes", Sent: the title is skipped.
-        let rows = [true, true, false, true];
-        assert_eq!(step_to(&rows, 1, 1), Some(3));
-        assert_eq!(step_to(&rows, 3, -1), Some(1));
+    fn a_step_crosses_a_folded_section_by_its_heading() {
+        // Inbox, Mailboxes, hidden Sent, Smart Mailboxes, a smart mailbox.
+        let rows = [true, true, false, false, true];
+        assert_eq!(step_to(&rows, 0, 1), Some(1));
+        assert_eq!(step_to(&rows, 1, 1), Some(4));
+        assert_eq!(step_to(&rows, 4, -1), Some(1));
     }
 
     #[test]

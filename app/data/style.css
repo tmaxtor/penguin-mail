@@ -434,13 +434,13 @@ flowboxchild:focus-visible > .recipient-chip {
   font-size: 0.78em;
   font-weight: 700;
 }
-.mailboxes > row > .sidebar-section {
-  /* 5 px under, and the row under the heading adds its own 2 px. */
-  margin: 16px 8px 5px 10px;
+.mailboxes > row.section-heading { margin-top: 11px; }
+.mailboxes > row.section-heading:first-child { margin-top: 7px; }
+.mailboxes > row.section-heading > box { padding: 5px 14px 5px 10px; }
+.mailboxes > row.section-heading .sidebar-section {
   letter-spacing: 0.4px;
   text-transform: uppercase;
 }
-.mailboxes > row:first-child > .sidebar-section { margin-top: 12px; }
 
 /* Row type: 14 px names, 700 when selected. */
 .mailbox-row > label { font-size: 0.95em; font-weight: 500; }

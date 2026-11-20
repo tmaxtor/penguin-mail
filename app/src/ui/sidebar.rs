@@ -28,10 +28,31 @@ use tree::label_rows;
 struct Row {
     row: gtk::ListBoxRow,
     mailbox: Mailbox,
+    section: Section,
     /// The mailbox's name, kept so the spoken name can be built again
     /// whenever the count beside it changes.
     name: String,
     count: gtk::Label,
+}
+
+struct SectionHeading {
+    row: gtk::ListBoxRow,
+    section: Section,
+    chevron: Option<gtk::Image>,
+}
+
+impl SectionHeading {
+    fn set_expanded(&self, open: bool) {
+        if let Some(chevron) = &self.chevron {
+            chevron.set_icon_name(Some(if open {
+                "penguin-mail-chevron-down-symbolic"
+            } else {
+                "penguin-mail-chevron-right-symbolic"
+            }));
+            self.row
+                .update_state(&[gtk::accessible::State::Expanded(Some(open))]);
+        }
+    }
 }
 
 struct Heading {
@@ -327,6 +348,8 @@ pub struct Sidebar {
     /// The row the arrow keys last moved the focus to (`mark_keyed`).
     keyed: RefCell<Option<gtk::ListBoxRow>>,
     rows: RefCell<Vec<Row>>,
+    sections: RefCell<Vec<SectionHeading>>,
+    collapsed: RefCell<HashSet<Section>>,
     headings: RefCell<Vec<Heading>>,
     /// Accounts whose sections the user expanded or collapsed.
     expanded: RefCell<HashMap<AccountId, bool>>,
@@ -614,6 +637,8 @@ impl Sidebar {
                 css
             },
             rows: RefCell::new(Vec::new()),
+            sections: RefCell::new(Vec::new()),
+            collapsed: RefCell::new(HashSet::new()),
             headings: RefCell::new(Vec::new()),
             expanded: RefCell::new(HashMap::new()),
             start_expanded: Cell::new(None),
@@ -645,6 +670,9 @@ impl Sidebar {
             let Some(sidebar) = weak.upgrade() else {
                 return;
             };
+            if sidebar.toggle_section(row) {
+                return;
+            }
             let account = sidebar
                 .headings
                 .borrow()
@@ -654,7 +682,7 @@ impl Sidebar {
             if let Some(account_id) = account {
                 let open = !sidebar.is_expanded(account_id);
                 sidebar.expanded.borrow_mut().insert(account_id, open);
-                sidebar.apply_expansion();
+                sidebar.apply_visibility();
             }
         });
         // The list is one Tab stop and the arrows move inside it without
@@ -809,8 +837,7 @@ impl Sidebar {
         false
     }
 
-    /// Opens the mailbox under the focus, or opens or closes the account
-    /// whose heading has it.
+    /// Opens the focused mailbox or toggles the focused heading.
     fn open_focused(&self) -> bool {
         let Some(row) = self.focused_row() else {
             return false;
@@ -973,8 +1000,30 @@ impl Sidebar {
             .unwrap_or(default)
     }
 
-    /// Shows or hides each account's rows. The selected row always stays visible.
-    fn apply_expansion(&self) {
+    fn toggle_section(&self, row: &gtk::ListBoxRow) -> bool {
+        let sections = self.sections.borrow();
+        let Some(heading) = sections
+            .iter()
+            .find(|heading| &heading.row == row && heading.chevron.is_some())
+        else {
+            return false;
+        };
+        let open = {
+            let mut collapsed = self.collapsed.borrow_mut();
+            let open = collapsed.remove(&heading.section);
+            if !open {
+                collapsed.insert(heading.section);
+            }
+            open
+        };
+        heading.set_expanded(open);
+        self.apply_visibility();
+        true
+    }
+
+    /// Combines section visibility with each account's expansion and flag counts.
+    fn apply_visibility(&self) {
+        let collapsed = self.collapsed.borrow();
         let selected = self.list.selected_row();
         // An open account's mailboxes run straight into the next heading,
         // so that heading gets space above it. Closed accounts stay flush,
@@ -982,6 +1031,9 @@ impl Sidebar {
         let mut after_open = false;
         for heading in self.headings.borrow().iter() {
             let open = self.is_expanded(heading.account_id);
+            heading
+                .row
+                .set_visible(!collapsed.contains(&Section::Accounts));
             if after_open {
                 heading.row.add_css_class("after-open");
             } else {
@@ -994,14 +1046,15 @@ impl Sidebar {
             heading
                 .count
                 .set_visible(!open && heading.count.label() != "0");
-            for row in self.rows.borrow().iter() {
-                if row.mailbox.account() == Some(heading.account_id)
-                    && row.row.index() > heading.row.index()
-                {
-                    row.row
-                        .set_visible(open || selected.as_ref() == Some(&row.row));
-                }
-            }
+        }
+        for row in self.rows.borrow().iter() {
+            let selected = selected.as_ref() == Some(&row.row);
+            let used = !sections::hidden_until_used(&row.mailbox) || row.count.get_visible();
+            let account_open = row.section != Section::Accounts
+                || row.mailbox.account().is_some_and(|id| self.is_expanded(id));
+            row.row.set_visible(
+                !collapsed.contains(&row.section) && (used && account_open || selected),
+            );
         }
     }
 
@@ -1042,10 +1095,10 @@ impl Sidebar {
         self.muted.set(true);
         self.list.remove_all();
         self.rows.borrow_mut().clear();
+        self.sections.borrow_mut().clear();
         self.headings.borrow_mut().clear();
         if extras.sidebar.visible("section:favorites", true) {
-            self.list
-                .append(&section_title(&Section::Favorites.title()));
+            self.add_section(Section::Favorites);
             if let Some(favorites) = &extras.sidebar.favorites {
                 let choices = mailbox_choices(accounts, &extras.smart, vips);
                 for favorite in favorites {
@@ -1072,8 +1125,7 @@ impl Sidebar {
             }
         }
         if extras.sidebar.visible("section:mailboxes", true) {
-            self.list
-                .append(&section_title(&Section::Mailboxes.title()));
+            self.add_section(Section::Mailboxes);
             let mut places: Vec<Place> = [
                 Place::Unified(Standard::Inbox),
                 Place::Unified(Standard::Flagged),
@@ -1103,7 +1155,7 @@ impl Sidebar {
             }
         }
         if !extras.smart.is_empty() && extras.sidebar.visible("section:smart", true) {
-            self.list.append(&section_title(&Section::Smart.title()));
+            self.add_section(Section::Smart);
             for smart in &extras.smart {
                 let mailbox = Mailbox::Smart(smart.clone());
                 if extras.sidebar.visible(&format!("smart:{}", smart.id), true) {
@@ -1117,7 +1169,7 @@ impl Sidebar {
             // The rows above list every account at once. This says what
             // the ones below are, rather than leaving a reader to work it
             // out from the addresses.
-            self.list.append(&section_title(&Section::Accounts.title()));
+            self.add_section(Section::Accounts);
         }
         for (account, labels) in accounts
             .iter()
@@ -1278,7 +1330,6 @@ impl Sidebar {
         }
         self.label_css.load_from_string(&label_rules);
         self.select(selected);
-        self.apply_expansion();
         self.muted.set(false);
         // The new rows get their height, and selecting a row scrolls to it,
         // a moment later; put the view back once that has happened.
@@ -1286,6 +1337,13 @@ impl Sidebar {
         glib::timeout_add_local_once(std::time::Duration::from_millis(120), move || {
             adjustment.set_value(scrolled);
         });
+    }
+
+    fn add_section(&self, section: Section) {
+        let heading = section_title(section);
+        heading.set_expanded(!self.collapsed.borrow().contains(&section));
+        self.list.append(&heading.row);
+        self.sections.borrow_mut().push(heading);
     }
 
     /// Adds the row, or the run of rows, that one place in the layout
@@ -1576,10 +1634,17 @@ impl Sidebar {
             row.add_controller(target);
         }
         super::name(&row, name);
+        let section = self
+            .sections
+            .borrow()
+            .last()
+            .expect("mailbox rows follow a section heading")
+            .section;
         self.list.append(&row);
         self.rows.borrow_mut().push(Row {
             row: row.clone(),
             mailbox,
+            section,
             name: name.to_string(),
             count,
         });
@@ -1592,6 +1657,8 @@ impl Sidebar {
         let rows = self.rows.borrow();
         let row = rows.iter().find(|r| &r.mailbox == mailbox).or(rows.first());
         self.list.select_row(row.map(|r| &r.row));
+        drop(rows);
+        self.apply_visibility();
         self.muted.set(was_muted);
     }
 
@@ -1599,6 +1666,7 @@ impl Sidebar {
     pub fn clear_selection(&self) {
         let was_muted = self.muted.replace(true);
         self.list.unselect_all();
+        self.apply_visibility();
         self.muted.set(was_muted);
     }
 
@@ -1614,14 +1682,8 @@ impl Sidebar {
     pub fn set_counts(&self, result: &mailrs_sync::mailbox::Counts) {
         use mailrs_sync::mailbox::SmartCountState;
         let counts = &result.mailboxes;
-        let selected = self.list.selected_row();
         for row in self.rows.borrow().iter() {
             let count = counts.get(&row.mailbox).copied().unwrap_or(0);
-            if sections::hidden_until_used(&row.mailbox) {
-                // Each flag colour shows only while in use.
-                row.row
-                    .set_visible(count > 0 || selected.as_ref() == Some(&row.row));
-            }
             let is_drafts = row.mailbox.standard() == Some(Standard::Drafts)
                 || matches!(
                     &row.mailbox,
@@ -1701,7 +1763,7 @@ impl Sidebar {
                 &heading.description,
             );
         }
-        self.apply_expansion();
+        self.apply_visibility();
     }
 }
 
@@ -1977,25 +2039,44 @@ pub fn mailbox_choices(
     choices
 }
 
-/// A small heading between sections. It cannot be selected.
-fn section_title(text: &str) -> gtk::ListBoxRow {
+fn section_title(section: Section) -> SectionHeading {
+    let text = section.title();
+    let content = gtk::Box::builder().spacing(8).build();
+    content.append(
+        &gtk::Label::builder()
+            .label(&text)
+            .xalign(0.0)
+            .hexpand(true)
+            .css_classes(["sidebar-section", "dim-label", "caption-heading"])
+            .build(),
+    );
+    let chevron = (section != Section::Smart).then(|| {
+        let icon = gtk::Image::builder()
+            .pixel_size(12)
+            .css_classes(["dim-label"])
+            .build();
+        content.append(&icon);
+        icon
+    });
+    let collapsible = chevron.is_some();
     let row = gtk::ListBoxRow::builder()
-        .child(
-            &gtk::Label::builder()
-                .label(text)
-                .xalign(0.0)
-                .css_classes(["sidebar-section", "dim-label", "caption-heading"])
-                .build(),
-        )
+        .child(&content)
+        .css_classes(["section-heading"])
         .selectable(false)
-        .activatable(false)
+        .activatable(collapsible)
+        .focusable(collapsible)
         .build();
-    // The list puts the label inside a row of its own, and the row is
-    // what a screen reader reaches, so the words have to be on it too or
-    // the section announces as nothing.
-    row.set_accessible_role(gtk::AccessibleRole::RowHeader);
-    crate::ui::name(&row, text);
-    row
+    row.set_accessible_role(if collapsible {
+        gtk::AccessibleRole::Button
+    } else {
+        gtk::AccessibleRole::RowHeader
+    });
+    super::name(&row, &text);
+    SectionHeading {
+        row,
+        section,
+        chevron,
+    }
 }
 
 /// Edit, move, and delete on a right click or long press of a smart mailbox.

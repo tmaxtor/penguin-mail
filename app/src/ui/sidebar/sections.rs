@@ -11,7 +11,7 @@ use mailrs_domain::translate::gettext;
 use crate::ui::{Mailbox, Standard};
 
 /// A heading in the sidebar.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Section {
     Favorites,
     Mailboxes,
