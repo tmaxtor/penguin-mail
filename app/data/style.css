@@ -443,8 +443,9 @@ flowboxchild:focus-visible > .recipient-chip {
 }
 
 /* Row type: 14 px names, 700 when selected. */
-.mailbox-row > label { font-size: 0.95em; font-weight: 500; }
-.mailboxes > row:selected .mailbox-row > label { font-weight: 700; }
+.mailbox-row > label, .mailbox-row .favorite-title { font-size: 0.95em; font-weight: 500; }
+.mailboxes > row:selected .mailbox-row > label,
+.mailboxes > row:selected .favorite-title { font-weight: 700; }
 /* Rows 32 px tall on a 34 px pitch, as mockups.py's `side_row` draws
    them: 7 px above and below the label, and 2 px under each row. */
 .mailbox-row { min-height: 16px; padding: 7px 14px 7px 0; }

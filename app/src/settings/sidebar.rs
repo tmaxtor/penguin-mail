@@ -34,6 +34,51 @@ impl SidebarLayout {
         })
     }
 
+    pub fn add_favorite(&mut self, key: &str) -> bool {
+        let mut favorites = self.favorites();
+        if favorites.iter().any(|favorite| favorite.key == key) {
+            return false;
+        }
+        favorites.push(FavoriteMailbox {
+            key: key.into(),
+            name: String::new(),
+        });
+        self.favorites = Some(favorites);
+        true
+    }
+
+    pub fn remove_favorite(&mut self, key: &str) -> bool {
+        let mut favorites = self.favorites();
+        let len = favorites.len();
+        favorites.retain(|favorite| favorite.key != key);
+        if favorites.len() == len {
+            return false;
+        }
+        self.favorites = Some(favorites);
+        true
+    }
+
+    pub fn place_favorite(&mut self, moved: &str, target: &str, after: bool) -> bool {
+        let mut favorites = self.favorites();
+        if moved == target {
+            return false;
+        }
+        let Some(from) = favorites.iter().position(|favorite| favorite.key == moved) else {
+            return false;
+        };
+        let Some(to) = favorites.iter().position(|favorite| favorite.key == target) else {
+            return false;
+        };
+        let to = to + usize::from(after) - usize::from(from < to);
+        if from == to {
+            return false;
+        }
+        let favorite = favorites.remove(from);
+        favorites.insert(to, favorite);
+        self.favorites = Some(favorites);
+        true
+    }
+
     pub fn placed(&mut self, email: &str, moved: &[(String, String)], order: &[String]) {
         let root = format!("account:{}", email.to_ascii_lowercase());
         let prefix = format!("{root}:label:");
@@ -196,5 +241,64 @@ mod tests {
             serde_json::from_str::<SidebarLayout>(&saved).unwrap(),
             layout
         );
+    }
+
+    #[test]
+    fn adding_favorites_keeps_defaults_and_distinguishes_accounts() {
+        let mut layout = SidebarLayout::default();
+        let defaults = layout.favorites();
+        let first = "account:first@example.com:inbox";
+        let second = "account:second@example.com:inbox";
+        assert!(layout.add_favorite(first));
+        assert!(layout.add_favorite(second));
+        assert!(!layout.add_favorite(first));
+        let favorites = layout.favorites();
+        assert_eq!(&favorites[..defaults.len()], defaults);
+        assert_eq!(favorites[defaults.len()].key, first);
+        assert_eq!(favorites[defaults.len() + 1].key, second);
+        assert_eq!(favorites.len(), defaults.len() + 2);
+    }
+
+    #[test]
+    fn favorites_keep_their_names_and_positions_after_saving() {
+        let mut layout = SidebarLayout::default();
+        let first = "account:first@example.com:inbox";
+        let second = "account:second@example.com:inbox";
+        assert!(layout.add_favorite(first));
+        assert!(layout.add_favorite(second));
+        layout.favorites.as_mut().unwrap().last_mut().unwrap().name = "Work".into();
+
+        assert!(layout.place_favorite(second, "all:inbox", false));
+        assert!(layout.place_favorite("all:inbox", first, true));
+        assert!(!layout.place_favorite(second, second, true));
+        assert!(!layout.place_favorite("missing", second, true));
+        assert!(!layout.place_favorite(second, "missing", true));
+        assert!(!layout.place_favorite("all:inbox", first, true));
+        assert!(layout.remove_favorite(first));
+        assert!(!layout.remove_favorite(first));
+        assert!(layout.visible(first, true));
+
+        let saved = serde_json::to_string(&layout).unwrap();
+        let restored: SidebarLayout = serde_json::from_str(&saved).unwrap();
+        let favorites = restored.favorites();
+        assert_eq!(favorites[0].name, "Work");
+        assert_eq!(
+            favorites
+                .iter()
+                .map(|item| item.key.as_str())
+                .collect::<Vec<_>>(),
+            [second, "vips", "all:flagged", "follow-up", "all:inbox"]
+        );
+    }
+
+    #[test]
+    fn removing_the_last_favorite_does_not_restore_the_defaults() {
+        let mut layout = SidebarLayout::default();
+        for item in layout.favorites() {
+            assert!(layout.remove_favorite(&item.key));
+        }
+        let saved = serde_json::to_string(&layout).unwrap();
+        let restored: SidebarLayout = serde_json::from_str(&saved).unwrap();
+        assert!(restored.favorites().is_empty());
     }
 }

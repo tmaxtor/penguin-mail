@@ -19,8 +19,8 @@ use mailrs_sync::Offers;
 use super::{FolderLook, LABEL_COLORS, Mailbox, Standard, describe, label_color_name};
 use crate::format::{PALETTE, account_color_index, palette_name};
 use crate::offered::Filing;
-use crate::settings::SidebarLayout;
 use crate::settings::Space;
+use crate::settings::{FavoriteMailbox, SidebarLayout};
 use keys::ListKey;
 use sections::{Place, Section};
 use tree::label_rows;
@@ -349,6 +349,7 @@ pub struct Sidebar {
     keyed: RefCell<Option<gtk::ListBoxRow>>,
     rows: RefCell<Vec<Row>>,
     sections: RefCell<Vec<SectionHeading>>,
+    favorites: RefCell<Option<Vec<FavoriteMailbox>>>,
     collapsed: RefCell<HashSet<Section>>,
     headings: RefCell<Vec<Heading>>,
     /// Accounts whose sections the user expanded or collapsed.
@@ -370,6 +371,23 @@ pub struct Sidebar {
 struct Dragged {
     account_id: AccountId,
     label_id: String,
+}
+
+#[derive(Clone, glib::Boxed)]
+#[boxed_type(name = "PenguinMailFavoriteDrag")]
+struct FavoriteDrag(String);
+
+#[derive(Clone, glib::Boxed)]
+#[boxed_type(name = "PenguinMailFavoriteMove")]
+struct FavoriteMove(String);
+
+enum FavoriteRow<'a> {
+    Source(&'a str),
+    Entry {
+        key: &'a str,
+        previous: Option<&'a str>,
+        next: Option<&'a str>,
+    },
 }
 
 /// A label dropped on a row of its own account's labels: which one, onto
@@ -638,6 +656,7 @@ impl Sidebar {
             },
             rows: RefCell::new(Vec::new()),
             sections: RefCell::new(Vec::new()),
+            favorites: RefCell::new(None),
             collapsed: RefCell::new(HashSet::new()),
             headings: RefCell::new(Vec::new()),
             expanded: RefCell::new(HashMap::new()),
@@ -1001,24 +1020,41 @@ impl Sidebar {
     }
 
     fn toggle_section(&self, row: &gtk::ListBoxRow) -> bool {
-        let sections = self.sections.borrow();
-        let Some(heading) = sections
+        let section = self
+            .sections
+            .borrow()
             .iter()
             .find(|heading| &heading.row == row && heading.chevron.is_some())
-        else {
+            .map(|heading| heading.section);
+        let Some(section) = section else {
             return false;
         };
-        let open = {
-            let mut collapsed = self.collapsed.borrow_mut();
-            let open = collapsed.remove(&heading.section);
-            if !open {
-                collapsed.insert(heading.section);
-            }
-            open
-        };
-        heading.set_expanded(open);
-        self.apply_visibility();
+        let open = self.collapsed.borrow().contains(&section);
+        self.set_section_open(section, open);
         true
+    }
+
+    pub fn open_favorites(&self) {
+        if self.collapsed.borrow().contains(&Section::Favorites) {
+            self.set_section_open(Section::Favorites, true);
+        }
+    }
+
+    fn set_section_open(&self, section: Section, open: bool) {
+        if open {
+            self.collapsed.borrow_mut().remove(&section);
+        } else {
+            self.collapsed.borrow_mut().insert(section);
+        }
+        for heading in self
+            .sections
+            .borrow()
+            .iter()
+            .filter(|h| h.section == section)
+        {
+            heading.set_expanded(open);
+        }
+        self.apply_visibility();
     }
 
     /// Combines section visibility with each account's expansion and flag counts.
@@ -1078,8 +1114,11 @@ impl Sidebar {
         }
     }
 
-    /// Rebuilds every row. `selected` is kept selected when it still exists.
-    /// Rebuilds every row. `vips` lists VIPs by address and name. `offers`
+    pub fn favorites_changed(&self, layout: &SidebarLayout) -> bool {
+        *self.favorites.borrow() != layout.favorites
+    }
+
+    /// Rebuilds every row and keeps the selected mailbox. `offers`
     /// says what each account offers, which words its menu.
     pub fn rebuild(
         &self,
@@ -1088,41 +1127,30 @@ impl Sidebar {
         selected: &Mailbox,
         offers: impl Fn(AccountId) -> Offers,
     ) {
-        let vips = &extras.vips;
         let mut label_rules = String::new();
         // Keep the scroll position; label changes rebuild every row.
         let scrolled = self.scroller.vadjustment().value();
+        let focused_favorite = self
+            .list
+            .focus_child()
+            .and_downcast::<gtk::ListBoxRow>()
+            .filter(|_| self.favorites_changed(&extras.sidebar))
+            .and_then(|focused| {
+                self.rows
+                    .borrow()
+                    .iter()
+                    .find(|row| row.section == Section::Favorites && row.row == focused)
+                    .map(|row| row.mailbox.clone())
+            });
         self.muted.set(true);
+        self.mark_keyed(None);
         self.list.remove_all();
         self.rows.borrow_mut().clear();
         self.sections.borrow_mut().clear();
         self.headings.borrow_mut().clear();
         if extras.sidebar.visible("section:favorites", true) {
             self.add_section(Section::Favorites);
-            if let Some(favorites) = &extras.sidebar.favorites {
-                let choices = mailbox_choices(accounts, &extras.smart, vips);
-                for favorite in favorites {
-                    if favorite.key == "vips" && favorite.name.is_empty() {
-                        self.add_place(Place::Vips, vips);
-                    } else if let Some(choice) =
-                        choices.iter().find(|choice| choice.key == favorite.key)
-                    {
-                        let name = if favorite.name.is_empty() {
-                            &choice.name
-                        } else {
-                            &favorite.name
-                        };
-                        self.add_mailbox(choice.mailbox.clone(), name, choice.icon, 0);
-                        if favorite.key == "all:flagged" {
-                            self.add_place(Place::FlagColors, vips);
-                        }
-                    }
-                }
-            } else {
-                for &place in sections::LAYOUT[0].1 {
-                    self.add_place(place, vips);
-                }
-            }
+            self.add_favorites(accounts, extras);
         }
         if extras.sidebar.visible("section:mailboxes", true) {
             self.add_section(Section::Mailboxes);
@@ -1132,7 +1160,7 @@ impl Sidebar {
                 Place::FollowUp,
             ]
             .into_iter()
-            .chain(sections::LAYOUT[1].1.iter().copied())
+            .chain(sections::MAILBOXES.iter().copied())
             .collect();
             places.sort_by_key(|place| {
                 extras
@@ -1147,9 +1175,9 @@ impl Sidebar {
                     Place::Unified(Standard::Inbox | Standard::Flagged) | Place::FollowUp
                 );
                 if extras.sidebar.visible(&place.key(), by_default) {
-                    self.add_place(place, vips);
+                    self.add_place(place);
                     if place == Place::Unified(Standard::Flagged) {
-                        self.add_place(Place::FlagColors, vips);
+                        self.add_place(Place::FlagColors);
                     }
                 }
             }
@@ -1213,10 +1241,8 @@ impl Sidebar {
             let mut add_labels = |under| {
                 for entry in rows.iter().filter(|row| row.under == under) {
                     let label = entry.label;
-                    if !extras
-                        .sidebar
-                        .visible(&format!("{root}:label:{}", label.id), true)
-                    {
+                    let key = format!("{root}:label:{}", label.id);
+                    if !extras.sidebar.visible(&key, true) {
                         continue;
                     }
                     let mailbox = Mailbox::Label {
@@ -1242,6 +1268,7 @@ impl Sidebar {
                         icon.add_css_class(&class);
                     }
                     let moves = tree::moves(&rows, &label.id);
+                    let favorite = entry.opens.then_some(key.as_str());
                     label_menu(
                         &row,
                         account.id,
@@ -1249,8 +1276,15 @@ impl Sidebar {
                         Filing::of([account_offers]),
                         moves,
                         account_offers.label_colors,
+                        favorite,
                     );
-                    self.label_drag(&row, account.id, &label.id, entry.opens.then_some(dest));
+                    self.label_drag(
+                        &row,
+                        account.id,
+                        &label.id,
+                        entry.opens.then_some(dest),
+                        favorite,
+                    );
                 }
             };
             let mut roots: Vec<(String, Mailbox, String, &'static str, Option<Role>)> =
@@ -1296,7 +1330,14 @@ impl Sidebar {
             }
             for (key, mailbox, name, icon, role) in roots {
                 if extras.sidebar.visible(&key, true) {
-                    self.add_mailbox(mailbox, &name, icon, 1);
+                    self.add_named_mailbox(
+                        mailbox,
+                        &name,
+                        icon,
+                        1,
+                        None,
+                        Some(FavoriteRow::Source(&key)),
+                    );
                 }
                 if let Some(role) = role {
                     add_labels(Some(role));
@@ -1329,7 +1370,36 @@ impl Sidebar {
             }
         }
         self.label_css.load_from_string(&label_rules);
-        self.select(selected);
+        *self.favorites.borrow_mut() = extras.sidebar.favorites.clone();
+        if self
+            .rows
+            .borrow()
+            .iter()
+            .any(|row| &row.mailbox == selected)
+        {
+            self.select(selected);
+        } else {
+            self.clear_selection();
+        }
+        if let Some(mailbox) = focused_favorite {
+            let row = self
+                .rows
+                .borrow()
+                .iter()
+                .find(|row| row.section == Section::Favorites && row.mailbox == mailbox)
+                .map(|row| row.row.clone())
+                .or_else(|| {
+                    self.sections
+                        .borrow()
+                        .iter()
+                        .find(|heading| heading.section == Section::Favorites)
+                        .map(|heading| heading.row.clone())
+                });
+            if let Some(row) = row.filter(|row| row.is_visible()) {
+                self.mark_keyed(Some(&row));
+                row.grab_focus();
+            }
+        }
         self.muted.set(false);
         // The new rows get their height, and selecting a row scrolls to it,
         // a moment later; put the view back once that has happened.
@@ -1342,13 +1412,93 @@ impl Sidebar {
     fn add_section(&self, section: Section) {
         let heading = section_title(section);
         heading.set_expanded(!self.collapsed.borrow().contains(&section));
+        if section == Section::Favorites {
+            favorite_drop(&heading.row);
+        }
         self.list.append(&heading.row);
         self.sections.borrow_mut().push(heading);
     }
 
+    fn add_favorites(&self, accounts: &[(Account, Vec<Label>)], extras: &Extras) {
+        let favorites = extras.sidebar.favorites();
+        let choice_accounts = if favorites
+            .iter()
+            .any(|item| item.key.starts_with("account:"))
+        {
+            accounts
+        } else {
+            &[]
+        };
+        let choices = mailbox_choices(choice_accounts, &extras.smart, &extras.vips);
+        let mut entries = favorites
+            .iter()
+            .filter_map(|item| {
+                let choice = choices.iter().find(|choice| choice.key == item.key)?;
+                Some((item, choice))
+            })
+            .peekable();
+        let mut previous = None;
+        while let Some((item, choice)) = entries.next() {
+            let name = if item.name.is_empty() {
+                &choice.name
+            } else {
+                &item.name
+            };
+            let account = choice.mailbox.account().and_then(|id| {
+                accounts
+                    .iter()
+                    .find(|(account, _)| account.id == id)
+                    .map(|(account, _)| extras.names.get(&id).unwrap_or(&account.email).as_str())
+            });
+            let row = self.add_named_mailbox(
+                choice.mailbox.clone(),
+                name,
+                choice.icon,
+                0,
+                account,
+                Some(FavoriteRow::Entry {
+                    key: &item.key,
+                    previous,
+                    next: entries.peek().map(|(item, _)| item.key.as_str()),
+                }),
+            );
+            previous = Some(item.key.as_str());
+            match item.key.as_str() {
+                "all:flagged" => {
+                    if let Some(icon) = row.child().and_then(|c| c.first_child()) {
+                        icon.add_css_class("flag-orange");
+                    }
+                    self.add_place(Place::FlagColors);
+                }
+                "vips" if item.name.is_empty() => {
+                    if let Some(icon) = row.child().and_then(|c| c.first_child()) {
+                        icon.add_css_class("sidebar-vip");
+                    }
+                    self.add_vip_members(&extras.vips);
+                }
+                _ => {}
+            }
+        }
+    }
+
+    fn add_vip_members(&self, vips: &[(String, String)]) {
+        for (email, name) in vips {
+            let person = Mailbox::Vips {
+                emails: vec![email.clone()],
+                name: name.clone(),
+            };
+            let row = self.add_mailbox(person, name, "avatar-default-symbolic", 1);
+            let menu = gio::Menu::new();
+            let item = gio::MenuItem::new(Some(&gettext("Remove from VIPs")), None);
+            item.set_action_and_target_value(Some("win.vip-remove"), Some(&email.to_variant()));
+            menu.append_item(&item);
+            context_menu(&row, &menu);
+        }
+    }
+
     /// Adds the row, or the run of rows, that one place in the layout
     /// stands for.
-    fn add_place(&self, place: Place, vips: &[(String, String)]) {
+    fn add_place(&self, place: Place) {
         match place {
             Place::Unified(which) => {
                 let row = self.add_mailbox(
@@ -1363,34 +1513,6 @@ impl Sidebar {
                     // The Flagged row wears the same orange as each flag
                     // colour under it, so the two read as one idea.
                     icon.add_css_class("flag-orange");
-                }
-            }
-            Place::Vips => {
-                if vips.is_empty() {
-                    return;
-                }
-                let everyone = Mailbox::Vips {
-                    emails: vips.iter().map(|(e, _)| e.clone()).collect(),
-                    name: gettext("VIPs"),
-                };
-                let row = self.add_mailbox(everyone, &gettext("VIPs"), "starred-symbolic", 0);
-                if let Some(icon) = row.child().and_then(|c| c.first_child()) {
-                    icon.add_css_class("sidebar-vip");
-                }
-                for (email, name) in vips {
-                    let person = Mailbox::Vips {
-                        emails: vec![email.clone()],
-                        name: name.clone(),
-                    };
-                    let row = self.add_mailbox(person, name, "avatar-default-symbolic", 1);
-                    let menu = gio::Menu::new();
-                    let item = gio::MenuItem::new(Some(&gettext("Remove from VIPs")), None);
-                    item.set_action_and_target_value(
-                        Some("win.vip-remove"),
-                        Some(&email.to_variant()),
-                    );
-                    menu.append_item(&item);
-                    context_menu(&row, &menu);
                 }
             }
             Place::FlagColors => {
@@ -1455,6 +1577,18 @@ impl Sidebar {
     /// Adds a mailbox row. `depth` indents it: 0 for the unified views, 1
     /// for an account's mailboxes, and one more per level of label nesting.
     fn add_mailbox(&self, mailbox: Mailbox, name: &str, icon: &str, depth: u32) -> gtk::ListBoxRow {
+        self.add_named_mailbox(mailbox, name, icon, depth, None, None)
+    }
+
+    fn add_named_mailbox(
+        &self,
+        mailbox: Mailbox,
+        name: &str,
+        icon: &str,
+        depth: u32,
+        account: Option<&str>,
+        favorite: Option<FavoriteRow<'_>>,
+    ) -> gtk::ListBoxRow {
         let trash = match &mailbox {
             Mailbox::Folder {
                 account_id,
@@ -1462,10 +1596,39 @@ impl Sidebar {
             } => Some(*account_id),
             _ => None,
         };
-        let row = self.add_row(mailbox, name, icon, depth, true);
-        if let Some(account_id) = trash {
-            let menu = trash_menu(account_id);
+        let row = self.add_row(mailbox, name, icon, depth, true, account);
+        if trash.is_none() && favorite.is_none() {
+            return row;
+        }
+        let menu = trash.map_or_else(gio::Menu::new, trash_menu);
+        match favorite {
+            Some(FavoriteRow::Source(key)) => {
+                menu.prepend_item(&favorite_item(key));
+                favorite_drag(
+                    &row,
+                    FavoriteDrag(key.into()).to_value(),
+                    gdk::DragAction::COPY,
+                );
+            }
+            Some(FavoriteRow::Entry {
+                key,
+                previous,
+                next,
+            }) => {
+                favorite_entry_menu(&menu, key, previous, next);
+                favorite_drag(
+                    &row,
+                    FavoriteMove(key.into()).to_value(),
+                    gdk::DragAction::MOVE,
+                );
+                favorite_move_drop(&row, key);
+            }
+            None => {}
+        }
+        if trash.is_some() {
             row_menu(&row, &menu, Filing::Folders, name);
+        } else {
+            context_menu(&row, &menu);
         }
         row
     }
@@ -1475,7 +1638,7 @@ impl Sidebar {
     /// the folders under it nest, but nothing selects or opens it and it
     /// takes no dropped mail.
     fn add_group(&self, mailbox: Mailbox, name: &str, depth: u32) -> gtk::ListBoxRow {
-        let row = self.add_row(mailbox, name, "folder-symbolic", depth, false);
+        let row = self.add_row(mailbox, name, "folder-symbolic", depth, false, None);
         row.set_tooltip_text(Some(&gettext("Holds folders, not mail")));
         // The keys stop on it and Enter opens its menu (`row_keys`).
         row.add_css_class(GROUP_CLASS);
@@ -1496,15 +1659,28 @@ impl Sidebar {
         account_id: AccountId,
         label_id: &str,
         mail: Option<Mailbox>,
+        favorite: Option<&str>,
     ) {
         let here = Dragged {
             account_id,
             label_id: label_id.to_string(),
         };
         let source = gtk::DragSource::new();
-        source.set_actions(gdk::DragAction::MOVE);
-        source.connect_prepare(|_, _, _| {
-            Some(gdk::ContentProvider::for_value(&DRAG_LABEL.to_value()))
+        let favorite = favorite.map(|key| FavoriteDrag(key.into()));
+        source.set_actions(if favorite.is_some() {
+            gdk::DragAction::MOVE | gdk::DragAction::COPY
+        } else {
+            gdk::DragAction::MOVE
+        });
+        source.connect_prepare(move |_, _, _| {
+            let label = gdk::ContentProvider::for_value(&DRAG_LABEL.to_value());
+            Some(match &favorite {
+                Some(favorite) => gdk::ContentProvider::new_union(&[
+                    label,
+                    gdk::ContentProvider::for_value(&favorite.to_value()),
+                ]),
+                None => label,
+            })
         });
         let (dragging, dragged, weak) = (Rc::clone(&self.dragging), here.clone(), row.downgrade());
         source.connect_drag_begin(move |source, _| {
@@ -1584,6 +1760,7 @@ impl Sidebar {
         icon: &str,
         depth: u32,
         opens: bool,
+        account: Option<&str>,
     ) -> gtk::ListBoxRow {
         // 12 px puts the icon inside the row's own left edge, which
         // `.mailboxes > row`'s 8 px margin already sets 8 px in from the
@@ -1595,14 +1772,36 @@ impl Sidebar {
             .css_classes(["mailbox-row"])
             .build();
         content.append(&gtk::Image::from_icon_name(icon));
-        content.append(
-            &gtk::Label::builder()
-                .label(name)
-                .xalign(0.0)
+        let title = gtk::Label::builder()
+            .label(name)
+            .xalign(0.0)
+            .hexpand(true)
+            .ellipsize(pango::EllipsizeMode::End)
+            .build();
+        let spoken = if let Some(account) = account {
+            let lines = gtk::Box::builder()
+                .orientation(gtk::Orientation::Vertical)
                 .hexpand(true)
-                .ellipsize(pango::EllipsizeMode::End)
-                .build(),
-        );
+                .build();
+            title.add_css_class("favorite-title");
+            lines.append(&title);
+            lines.append(
+                &gtk::Label::builder()
+                    .label(account)
+                    .xalign(0.0)
+                    .ellipsize(pango::EllipsizeMode::Middle)
+                    .css_classes(["caption", "dim-label"])
+                    .build(),
+            );
+            content.append(&lines);
+            fill(
+                &gettext("{mailbox}, {account}"),
+                &[("mailbox", name), ("account", account)],
+            )
+        } else {
+            content.append(&title);
+            name.to_string()
+        };
         let count = gtk::Label::builder()
             .css_classes(["count"])
             .visible(false)
@@ -1633,19 +1832,25 @@ impl Sidebar {
             });
             row.add_controller(target);
         }
-        super::name(&row, name);
+        super::name(&row, &spoken);
+        if account.is_some() {
+            row.set_tooltip_text(Some(&spoken));
+        }
         let section = self
             .sections
             .borrow()
             .last()
             .expect("mailbox rows follow a section heading")
             .section;
+        if section == Section::Favorites {
+            favorite_drop(&row);
+        }
         self.list.append(&row);
         self.rows.borrow_mut().push(Row {
             row: row.clone(),
             mailbox,
             section,
-            name: name.to_string(),
+            name: spoken,
             count,
         });
         row
@@ -1775,7 +1980,91 @@ pub const DRAG_MAIL: &str = "mailrs-mail";
 /// `Sidebar::dragging`, since only the sidebar drags labels.
 const DRAG_LABEL: &str = "mailrs-label";
 
-/// Marks `row` with where a dragged label would land: a line above or
+fn favorite_drag(row: &gtk::ListBoxRow, value: glib::Value, action: gdk::DragAction) {
+    let source = gtk::DragSource::new();
+    source.set_actions(action);
+    source.set_content(Some(&gdk::ContentProvider::for_value(&value)));
+    let weak = row.downgrade();
+    source.connect_drag_begin(move |source, _| {
+        if let Some(row) = weak.upgrade() {
+            source.set_icon(Some(&gtk::WidgetPaintable::new(Some(&row))), 0, 0);
+        }
+    });
+    row.add_controller(source);
+}
+
+fn favorite_drop(row: &gtk::ListBoxRow) {
+    let target = gtk::DropTarget::new(FavoriteDrag::static_type(), gdk::DragAction::COPY);
+    target.connect_enter(|target, _, _| {
+        if let Some(row) = target.widget().and_downcast::<gtk::ListBoxRow>() {
+            show_zone(&row, Some(tree::Zone::Inside));
+        }
+        gdk::DragAction::COPY
+    });
+    target.connect_leave(|target| {
+        if let Some(row) = target.widget().and_downcast::<gtk::ListBoxRow>() {
+            show_zone(&row, None);
+        }
+    });
+    target.connect_drop(|target, value, _, _| {
+        let (Some(row), Ok(FavoriteDrag(key))) = (
+            target.widget().and_downcast::<gtk::ListBoxRow>(),
+            value.get::<FavoriteDrag>(),
+        ) else {
+            return false;
+        };
+        show_zone(&row, None);
+        row.activate_action("win.favorite-mailbox", Some(&key.to_variant()))
+            .is_ok()
+    });
+    row.add_controller(target);
+}
+
+fn favorite_move_drop(row: &gtk::ListBoxRow, key: &str) {
+    let target = gtk::DropTarget::new(FavoriteMove::static_type(), gdk::DragAction::MOVE);
+    let zone = |row: &gtk::ListBoxRow, y| {
+        if y < f64::from(row.height()) / 2.0 {
+            tree::Zone::Before
+        } else {
+            tree::Zone::After
+        }
+    };
+    let preview = move |target: &gtk::DropTarget, _, y| {
+        if let Some(row) = target.widget().and_downcast::<gtk::ListBoxRow>() {
+            show_zone(&row, Some(zone(&row, y)));
+        }
+        gdk::DragAction::MOVE
+    };
+    target.connect_enter(preview);
+    target.connect_motion(preview);
+    target.connect_leave(|target| {
+        if let Some(row) = target.widget().and_downcast::<gtk::ListBoxRow>() {
+            show_zone(&row, None);
+        }
+    });
+    let key = key.to_string();
+    target.connect_drop(move |target, value, _, y| {
+        let (Some(row), Ok(FavoriteMove(moved))) = (
+            target.widget().and_downcast::<gtk::ListBoxRow>(),
+            value.get::<FavoriteMove>(),
+        ) else {
+            return false;
+        };
+        show_zone(&row, None);
+        if moved == key {
+            return false;
+        }
+        let after = zone(&row, y) == tree::Zone::After;
+        row.activate_action(
+            "win.place-favorite",
+            Some(&(moved, key.as_str(), after).to_variant()),
+        )
+        .is_ok()
+    });
+    row.add_controller(target);
+}
+
+/// Marks `row` with where a dragged mailbox would land: a line above or
 /// below it, or a tint for inside it. None clears the mark.
 fn show_zone(row: &gtk::ListBoxRow, zone: Option<tree::Zone>) {
     for (class, shown) in [
@@ -2236,9 +2525,40 @@ fn label_menu(
     filing: Filing,
     moves: tree::Moves,
     label_colors: bool,
+    favorite: Option<&str>,
 ) {
     let menu = label_menu_model(account_id, label, &filing, moves, label_colors);
+    if let Some(key) = favorite {
+        menu.prepend_item(&favorite_item(key));
+    }
     row_menu(row, &menu, filing, &label.name.replace('/', " › "));
+}
+
+fn favorite_item(key: &str) -> gio::MenuItem {
+    let item = gio::MenuItem::new(Some(&gettext("Add to Favorites")), None);
+    item.set_action_and_target_value(Some("win.favorite-mailbox"), Some(&key.to_variant()));
+    item
+}
+
+fn favorite_entry_menu(menu: &gio::Menu, key: &str, previous: Option<&str>, next: Option<&str>) {
+    let edits = gio::Menu::new();
+    for (target, label, after) in [
+        (previous, gettext("Move Up"), false),
+        (next, gettext("Move Down"), true),
+    ] {
+        if let Some(target) = target {
+            let item = gio::MenuItem::new(Some(&label), None);
+            item.set_action_and_target_value(
+                Some("win.place-favorite"),
+                Some(&(key, target, after).to_variant()),
+            );
+            edits.append_item(&item);
+        }
+    }
+    let remove = gio::MenuItem::new(Some(&gettext("Remove from Favorites")), None);
+    remove.set_action_and_target_value(Some("win.remove-favorite"), Some(&key.to_variant()));
+    edits.append_item(&remove);
+    menu.prepend_section(None, &edits);
 }
 
 fn trash_menu(account_id: Option<AccountId>) -> gio::Menu {

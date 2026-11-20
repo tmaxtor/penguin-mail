@@ -18,6 +18,10 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ### New
 
+- Remove Favorites from their menu and reorder them from the menu or by dragging them.
+
+- Add account folders to Favorites from their menu or by dragging them there, and see the account below each folder's name.
+
 - Collapse Favorites, Mailboxes, and Accounts from their headings in the sidebar.
 
 - Notifications can show a message preview with a choice of length, and macOS can show the subject in bold, when enabled in Preferences.

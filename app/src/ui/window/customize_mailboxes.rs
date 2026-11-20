@@ -12,7 +12,7 @@ use super::MainWindow;
 use crate::settings::reorder_siblings;
 use crate::settings::{Change, FavoriteMailbox, SidebarLayout};
 use crate::ui::Standard;
-use crate::ui::sidebar::sections::{LAYOUT, Place};
+use crate::ui::sidebar::sections::{MAILBOXES, Place};
 use crate::ui::sidebar::tree::{self, label_rows};
 use crate::ui::sidebar::{MailboxChoice, mailbox_choices};
 use mailrs_domain::Folder;
@@ -159,27 +159,6 @@ fn favorite_neighbor(
     indices.get(at.checked_add_signed(step)?).copied()
 }
 
-fn place_favorite(
-    favorites: &mut Vec<FavoriteMailbox>,
-    moved: &str,
-    target: &str,
-    after: bool,
-) -> bool {
-    if moved == target || !favorites.iter().any(|favorite| favorite.key == target) {
-        return false;
-    }
-    let Some(from) = favorites.iter().position(|favorite| favorite.key == moved) else {
-        return false;
-    };
-    let favorite = favorites.remove(from);
-    let at = favorites
-        .iter()
-        .position(|favorite| favorite.key == target)
-        .unwrap();
-    favorites.insert(at + usize::from(after), favorite);
-    true
-}
-
 impl Editor {
     fn layout(&self) -> Option<SidebarLayout> {
         self.win.upgrade().map(|win| win.settings().sidebar)
@@ -235,6 +214,28 @@ impl Editor {
 }
 
 impl MainWindow {
+    pub(super) fn favorite_mailbox(&self, key: &str) {
+        let mut layout = self.settings().sidebar;
+        layout.add_favorite(key);
+        layout.hidden.retain(|key| key != "section:favorites");
+        self.sidebar.open_favorites();
+        save(self, layout);
+    }
+
+    pub(super) fn remove_favorite_mailbox(&self, key: &str) {
+        let mut layout = self.settings().sidebar;
+        if layout.remove_favorite(key) {
+            save(self, layout);
+        }
+    }
+
+    pub(super) fn place_favorite_mailbox(&self, moved: &str, target: &str, after: bool) {
+        let mut layout = self.settings().sidebar;
+        if layout.place_favorite(moved, target, after) {
+            save(self, layout);
+        }
+    }
+
     pub(super) fn customize_mailboxes(self: &Rc<Self>) {
         self.mailbox_customization().present(Some(&self.window));
     }
@@ -390,13 +391,7 @@ impl MainWindow {
                 let Some(mut layout) = editor.layout() else {
                     return;
                 };
-                let mut favorites = layout.favorites();
-                if !favorites.iter().any(|favorite| favorite.key == key) {
-                    favorites.push(FavoriteMailbox {
-                        key: key.clone(),
-                        name: String::new(),
-                    });
-                    layout.favorites = Some(favorites);
+                if layout.add_favorite(&key) {
                     editor.save(layout);
                 }
             });
@@ -440,16 +435,9 @@ impl MainWindow {
                 let Some(mut layout) = editor.layout() else {
                     return false;
                 };
-                let mut favorites = layout.favorites();
-                if !place_favorite(
-                    &mut favorites,
-                    &moved,
-                    &key,
-                    y > f64::from(row.height()) / 2.0,
-                ) {
+                if !layout.place_favorite(&moved, &key, y > f64::from(row.height()) / 2.0) {
                     return false;
                 }
-                layout.favorites = Some(favorites);
                 editor.save(layout);
                 true
             });
@@ -464,11 +452,9 @@ impl MainWindow {
                 let Some(mut layout) = editor.layout() else {
                     return;
                 };
-                let mut favorites = layout.favorites();
-                favorites.retain(|favorite| favorite.key != key);
-
-                layout.favorites = Some(favorites);
-                editor.save(layout);
+                if layout.remove_favorite(&key) {
+                    editor.save(layout);
+                }
             });
             let key = item.choice.key.clone();
             let weak = Rc::downgrade(&editor);
@@ -520,7 +506,7 @@ impl MainWindow {
             Place::FollowUp,
         ]
         .into_iter()
-        .chain(LAYOUT[1].1.iter().copied())
+        .chain(MAILBOXES.iter().copied())
         .collect();
         places.sort_by_key(|place| {
             settings
@@ -934,7 +920,7 @@ pub(crate) async fn check_released() {
 
 #[cfg(test)]
 mod tests {
-    use super::{FavoriteMailbox, favorite_neighbor, place_favorite, reorder_siblings};
+    use super::{FavoriteMailbox, favorite_neighbor, reorder_siblings};
 
     fn favorites() -> Vec<FavoriteMailbox> {
         ["inbox", "vips", "flagged", "follow-up"]
@@ -959,20 +945,6 @@ mod tests {
             favorite_neighbor(&favorites, &visible, "follow-up", 1),
             None
         );
-    }
-
-    #[test]
-    fn dragging_places_a_favorite_before_or_after_its_target_and_keeps_its_name() {
-        let mut favorites = favorites();
-        assert!(place_favorite(&mut favorites, "inbox", "follow-up", true));
-        assert_eq!(favorites.last().unwrap().name, "Name for inbox");
-        assert!(place_favorite(&mut favorites, "inbox", "vips", false));
-        assert_eq!(favorites.first().unwrap().key, "inbox");
-        let before = favorites.clone();
-        assert!(!place_favorite(&mut favorites, "inbox", "inbox", true));
-        assert!(!place_favorite(&mut favorites, "missing", "inbox", true));
-        assert!(!place_favorite(&mut favorites, "inbox", "missing", true));
-        assert_eq!(favorites, before);
     }
 
     #[test]

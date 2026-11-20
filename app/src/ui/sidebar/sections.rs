@@ -30,13 +30,11 @@ impl Section {
     }
 }
 
-/// One entry under a heading. `Vips` and `FlagColors` stand for a run of
-/// rows the sidebar builds from what the person has.
+/// One entry under Mailboxes. `FlagColors` stands for a run of rows
+/// the sidebar builds from what the person has.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Place {
     Unified(Standard),
-    /// The VIPs row and one row per VIP, while there are any.
-    Vips,
     /// One row per flag colour in use, under Flagged.
     FlagColors,
     Outbox,
@@ -50,7 +48,6 @@ impl Place {
     pub fn key(self) -> String {
         match self {
             Place::Unified(which) => format!("all:{}", which.key()),
-            Place::Vips => "vips".into(),
             Place::FlagColors => "flag-colors".into(),
             Place::Outbox => "outbox".into(),
             Place::Scheduled => "scheduled".into(),
@@ -61,33 +58,18 @@ impl Place {
     }
 }
 
-/// The unified mailboxes under their two headings, in order.
-pub const LAYOUT: [(Section, &[Place]); 2] = [
-    (
-        Section::Favorites,
-        &[
-            Place::Unified(Standard::Inbox),
-            Place::Vips,
-            Place::Unified(Standard::Flagged),
-            Place::FlagColors,
-            Place::FollowUp,
-        ],
-    ),
-    (
-        Section::Mailboxes,
-        &[
-            Place::Unified(Standard::Sent),
-            Place::Unified(Standard::Drafts),
-            Place::Unified(Standard::Muted),
-            Place::Outbox,
-            Place::Scheduled,
-            Place::Reminders,
-            Place::Folder(Folder::Archive),
-            Place::Folder(Folder::Junk),
-            Place::Folder(Folder::Trash),
-            Place::Folder(Folder::AllMail),
-        ],
-    ),
+/// The unified mailboxes shown by default under Mailboxes, in order.
+pub const MAILBOXES: &[Place] = &[
+    Place::Unified(Standard::Sent),
+    Place::Unified(Standard::Drafts),
+    Place::Unified(Standard::Muted),
+    Place::Outbox,
+    Place::Scheduled,
+    Place::Reminders,
+    Place::Folder(Folder::Archive),
+    Place::Folder(Folder::Junk),
+    Place::Folder(Folder::Trash),
+    Place::Folder(Folder::AllMail),
 ];
 
 /// The Outbox row's icon: its own tray, or a warning while `stuck`
@@ -123,27 +105,9 @@ mod tests {
     }
 
     #[test]
-    fn favorites_lead_with_what_the_person_marked() {
-        let (section, places) = LAYOUT[0];
-        assert_eq!(section, Section::Favorites);
-        assert_eq!(
-            places,
-            &[
-                Place::Unified(Standard::Inbox),
-                Place::Vips,
-                Place::Unified(Standard::Flagged),
-                Place::FlagColors,
-                Place::FollowUp,
-            ]
-        );
-    }
-
-    #[test]
     fn the_mailboxes_run_from_sent_to_all_mail() {
-        let (section, places) = LAYOUT[1];
-        assert_eq!(section, Section::Mailboxes);
         assert_eq!(
-            places,
+            MAILBOXES,
             &[
                 Place::Unified(Standard::Sent),
                 Place::Unified(Standard::Drafts),
@@ -161,7 +125,11 @@ mod tests {
 
     #[test]
     fn every_unified_mailbox_has_one_place() {
-        let places: Vec<Place> = LAYOUT.iter().flat_map(|(_, p)| p.iter().copied()).collect();
+        let places: Vec<Place> = [Standard::Inbox, Standard::Flagged]
+            .map(Place::Unified)
+            .into_iter()
+            .chain(MAILBOXES.iter().copied())
+            .collect();
         for which in Standard::ALL {
             assert_eq!(
                 places

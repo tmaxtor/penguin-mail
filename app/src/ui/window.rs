@@ -1437,13 +1437,13 @@ impl MainWindow {
         let vanished = self
             .listing
             .transition(|screen| screen.accounts_read(still_there));
-        let settings = self.settings();
         let not_downloading = self
             .core
             .read(mailrs_store::pop3::accounts_failing)
             .await
             .map(|ids| ids.into_iter().collect())
             .unwrap_or_default();
+        let settings = self.settings();
         // The sidebar leaves out what the account hides, such as an IMAP
         // folder nobody subscribes to; everything else here still knows it.
         let data = data
@@ -1466,13 +1466,14 @@ impl MainWindow {
         });
         self.list.set_vips(settings.vips.keys().cloned().collect());
         let mailbox = self.shown();
-        if !matches!(mailbox, Mailbox::Search { .. }) {
+        if !matches!(mailbox, Mailbox::Search { .. })
+            || self.sidebar.favorites_changed(&extras.sidebar)
+        {
             self.sidebar
                 .rebuild(&data, &extras, &mailbox, |id| self.offers(id));
         }
-        // A search on screen skips the rebuild above, but an account's own
-        // heading row still needs its Rules, Hide My Email and Automatic
-        // Reply gated again when the account starts mid-search.
+        // During a search the sidebar rebuilds only for favorite changes.
+        // Account menus still need their actions gated when an account starts.
         self.sidebar.regate(|id| self.offers(id));
         if !data.is_empty()
             && !self.startup_account_applied.replace(true)
@@ -3583,6 +3584,37 @@ impl MainWindow {
             }
         });
         self.actions.add_action(&go);
+
+        for (name, edit) in [
+            (
+                "favorite-mailbox",
+                Self::favorite_mailbox as fn(&Self, &str),
+            ),
+            ("remove-favorite", Self::remove_favorite_mailbox),
+        ] {
+            let action = gio::SimpleAction::new(name, Some(glib::VariantTy::STRING));
+            let weak = Rc::downgrade(self);
+            action.connect_activate(move |_, parameter| {
+                if let (Some(win), Some(key)) = (weak.upgrade(), parameter.and_then(|p| p.str())) {
+                    edit(&win, key);
+                }
+            });
+            self.actions.add_action(&action);
+        }
+        let place = gio::SimpleAction::new(
+            "place-favorite",
+            Some(glib::VariantTy::new("(ssb)").unwrap()),
+        );
+        let weak = Rc::downgrade(self);
+        place.connect_activate(move |_, parameter| {
+            if let (Some(win), Some((moved, target, after))) = (
+                weak.upgrade(),
+                parameter.and_then(|p| p.get::<(String, String, bool)>()),
+            ) {
+                win.place_favorite_mailbox(&moved, &target, after);
+            }
+        });
+        self.actions.add_action(&place);
 
         let with_account = |name: &str, run: AccountAction| {
             let action = gio::SimpleAction::new(name, Some(glib::VariantTy::INT64));

@@ -188,6 +188,10 @@ libadwaita's focus ring on a row the arrows reach in a list view, so
 this list needs none of the sidebar's `keyed` class.
 ## Menus
 
+In Favorites, focus an entry and press Menu or Shift+F10 to open its menu.
+Choose Move Up, Move Down, or Remove from Favorites. The menu offers a move
+when there is a favorite in that direction.
+
 A thread row's menu holds `Export…`, and in the Outbox `Edit…`, `Send
 Now` and `Delete`. A right-click or a long press opens it, and so do Menu
 and Shift+F10 on the row with the focus. The focus sits on the list item
