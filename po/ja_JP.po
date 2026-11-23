@@ -2114,7 +2114,7 @@ msgstr "優先"
 msgid "Penguin Mail keeps syncing with no window open"
 msgstr "Penguin Mail はウィンドウを閉じても同期を続けます"
 
-#: app/src/compose.rs:697 app/src/compose.rs:3565
+#: app/src/compose.rs:697 app/src/compose.rs:3588
 msgid "Add at least one recipient."
 msgstr "宛先を少なくとも一つ追加してください。"
 
@@ -2122,7 +2122,7 @@ msgstr "宛先を少なくとも一つ追加してください。"
 msgid "“{address}” is not an email address."
 msgstr "「{address}」はメールアドレスではありません。"
 
-#: app/src/compose.rs:932 app/src/compose.rs:3571
+#: app/src/compose.rs:932 app/src/compose.rs:3594
 msgid "Choose a time in the future"
 msgstr "未来の時刻を選んでください"
 
@@ -2142,7 +2142,7 @@ msgstr "メッセージを組み立てられませんでした。"
 msgid "The list did not give one address to write to."
 msgstr "メーリングリストの送信先アドレスを特定できませんでした。"
 
-#: app/src/compose/html_signature.rs:168
+#: app/src/compose/html_signature.rs:198
 #, fuzzy
 #| msgid "Signature"
 msgid "[Signature picture]"
@@ -4042,8 +4042,8 @@ msgstr ""
 "書きに保存しますが、このコンピューターには {address} の鍵も証明書もありませ"
 "ん。"
 
-#: app/src/protection/draft.rs:147 app/src/ui/composer/mod.rs:2100
-#: app/src/ui/composer/mod.rs:2103
+#: app/src/protection/draft.rs:147 app/src/ui/composer/mod.rs:2107
+#: app/src/ui/composer/mod.rs:2110
 msgid "That account is not connected."
 msgstr "そのアカウントは接続されていません。"
 
@@ -4051,8 +4051,8 @@ msgstr "そのアカウントは接続されていません。"
 msgid "Could not save: {reason}"
 msgstr "保存できませんでした: {reason}"
 
-#: app/src/protection/draft.rs:212 app/src/ui/window.rs:2995
-#: app/src/ui/window.rs:3018
+#: app/src/protection/draft.rs:212 app/src/ui/window.rs:3021
+#: app/src/ui/window.rs:3044
 msgid "Could not open the draft: {reason}"
 msgstr "下書きを開けませんでした: {reason}"
 
@@ -4069,7 +4069,7 @@ msgstr "要約"
 msgid "Explain"
 msgstr "説明"
 
-#: app/src/render.rs:285 app/src/ui/thread_row.rs:447
+#: app/src/render.rs:285 app/src/ui/thread_row.rs:496
 msgid "Unknown sender"
 msgstr "不明な送信者"
 
@@ -4085,7 +4085,7 @@ msgstr "連絡先"
 msgid "Contact card for {person}"
 msgstr "{person} の連絡先カード"
 
-#: app/src/render.rs:379 app/src/ui/thread_row.rs:165
+#: app/src/render.rs:379 app/src/ui/thread_row.rs:167
 msgid "Invitation"
 msgstr "招待"
 
@@ -4171,7 +4171,7 @@ msgstr "標準の暗号化（TLS）"
 msgid "Not encrypted in transit"
 msgstr "転送中の暗号化なし"
 
-#: app/src/render.rs:611 app/src/ui/composer/mod.rs:2200
+#: app/src/render.rs:611 app/src/ui/composer/mod.rs:2207
 msgid "{count} attachment"
 msgid_plural "{count} attachments"
 msgstr[0] "{count} 個の添付ファイル"
@@ -4313,7 +4313,7 @@ msgid "Set up a different project"
 msgstr "別のプロジェクトを設定"
 
 #. Translators: Google is a name; keep it as it is.
-#: app/src/route_choice.rs:175 app/src/ui/window.rs:3348
+#: app/src/route_choice.rs:175 app/src/ui/window.rs:3374
 msgid "Set up your own Google project"
 msgstr "自分の Google プロジェクトを設定する"
 
@@ -4472,13 +4472,13 @@ msgstr "ルール"
 msgid "On this computer, while Penguin Mail is open"
 msgstr "このコンピューター上で、Penguin Mail の起動中に実行"
 
-#: app/src/servers.rs:72 app/src/ui/thread_row.rs:146
+#: app/src/servers.rs:72 app/src/ui/thread_row.rs:148
 msgid "On the server"
 msgstr "サーバー上"
 
 #: app/src/settings/mod.rs:229 app/src/settings/mod.rs:438
 #: app/src/settings/mod.rs:872 app/src/ui/assistant_mcp_prefs.rs:202
-#: app/src/ui/preferences.rs:1154
+#: app/src/ui/preferences.rs:1137
 msgid "Off"
 msgstr "無効"
 
@@ -4494,8 +4494,8 @@ msgstr "Anthropic API"
 msgid "Claude Subscription"
 msgstr "Claude サブスクリプション"
 
-#: app/src/settings/mod.rs:257 app/src/ui/window.rs:3771
-#: app/src/ui/window.rs:3859
+#: app/src/settings/mod.rs:257 app/src/ui/window.rs:3797
+#: app/src/ui/window.rs:3885
 msgid "Assistant"
 msgstr "アシスタント"
 
@@ -4898,12 +4898,12 @@ msgid "Open Penguin Mail"
 msgstr "Penguin Mail を開く"
 
 #: app/src/tray.rs:249 app/src/ui/composer/mod.rs:372
-#: app/src/ui/composer/mod.rs:675 app/src/ui/composer/mod.rs:1565
-#: app/src/ui/contact_card.rs:168 app/src/ui/thread_list.rs:494
+#: app/src/ui/composer/mod.rs:675 app/src/ui/composer/mod.rs:1572
+#: app/src/ui/contact_card.rs:168 app/src/ui/thread_list.rs:534
 msgid "New Message"
 msgstr "新規メッセージ"
 
-#: app/src/tray.rs:250 app/src/ui/sidebar.rs:2811 app/src/ui/window.rs:3777
+#: app/src/tray.rs:250 app/src/ui/sidebar.rs:2811 app/src/ui/window.rs:3803
 msgid "Check for Mail"
 msgstr "メールを確認"
 
@@ -4917,11 +4917,11 @@ msgstr "{version} の新機能"
 
 #: app/src/tray.rs:261 app/src/ui/about.rs:119 app/src/ui/about.rs:227
 #: app/src/ui/about.rs:235 app/src/ui/about.rs:242
-#: app/src/ui/preferences.rs:1214 app/src/update/mod.rs:108
+#: app/src/ui/preferences.rs:1197 app/src/update/mod.rs:108
 msgid "Check for Updates"
 msgstr "更新を確認"
 
-#: app/src/tray.rs:266 app/src/ui/window.rs:3798
+#: app/src/tray.rs:266 app/src/ui/window.rs:3824
 #: app/src/ui/window/shortcuts.rs:644
 msgid "Quit"
 msgstr "終了"
@@ -4943,7 +4943,7 @@ msgstr "新機能"
 msgid "Website"
 msgstr "ウェブサイト"
 
-#: app/src/ui/about.rs:179 app/src/ui/window.rs:3797
+#: app/src/ui/about.rs:179 app/src/ui/window.rs:3823
 msgid "Donate"
 msgstr "寄付"
 
@@ -4951,7 +4951,7 @@ msgstr "寄付"
 msgid "License"
 msgstr "ライセンス"
 
-#: app/src/ui/about.rs:203 app/src/ui/window.rs:3796
+#: app/src/ui/about.rs:203 app/src/ui/window.rs:3822
 msgid "About Penguin Mail"
 msgstr "Penguin Mail について"
 
@@ -5000,12 +5000,12 @@ msgid "The update to {version} failed"
 msgstr "{version} への更新に失敗しました"
 
 #: app/src/ui/add_account.rs:514 app/src/ui/sandbox_setup.rs:129
-#: app/src/ui/sandbox_setup.rs:136 app/src/ui/window.rs:1574
+#: app/src/ui/sandbox_setup.rs:136 app/src/ui/window.rs:1579
 msgid "Copy Command"
 msgstr "コマンドをコピー"
 
 #: app/src/ui/add_account.rs:524 app/src/ui/sandbox_setup.rs:143
-#: app/src/ui/window.rs:1579
+#: app/src/ui/window.rs:1584
 msgid "Command copied"
 msgstr "コマンドをコピーしました"
 
@@ -5097,17 +5097,17 @@ msgstr "リンクをコピー"
 #: app/src/ui/calendar/editor.rs:188 app/src/ui/calendar/manage.rs:287
 #: app/src/ui/calendar/manage.rs:437 app/src/ui/calendar/manage.rs:488
 #: app/src/ui/calendar/scope.rs:113 app/src/ui/composer/editor.rs:346
-#: app/src/ui/composer/mod.rs:1995 app/src/ui/composer/mod.rs:2117
-#: app/src/ui/composer/mod.rs:2478 app/src/ui/composer/mod.rs:2897
+#: app/src/ui/composer/mod.rs:2002 app/src/ui/composer/mod.rs:2124
+#: app/src/ui/composer/mod.rs:2485 app/src/ui/composer/mod.rs:2904
 #: app/src/ui/confirm.rs:29 app/src/ui/rules.rs:535 app/src/ui/rules.rs:724
-#: app/src/ui/sender_prefs.rs:210 app/src/ui/sender_prefs/signature.rs:78
+#: app/src/ui/sender_prefs.rs:210 app/src/ui/sender_prefs/signature.rs:64
 #: app/src/ui/smart_editor.rs:326 app/src/ui/switch_jmap.rs:174
 #: app/src/ui/switch_jmap.rs:225 app/src/ui/templates.rs:240
 #: app/src/ui/unsubscribe.rs:79 app/src/ui/unsubscribe.rs:142
 #: app/src/ui/vacation.rs:46 app/src/ui/when.rs:52
 #: app/src/ui/window/arrange.rs:169 app/src/ui/window/images.rs:87
 #: app/src/ui/window/images.rs:157 app/src/ui/window/organize.rs:78
-#: app/src/ui/window/organize.rs:127 app/src/ui/window/smart_trash.rs:81
+#: app/src/ui/window/organize.rs:127 app/src/ui/window/smart_trash.rs:89
 msgid "Cancel"
 msgstr "キャンセル"
 
@@ -5115,7 +5115,7 @@ msgstr "キャンセル"
 #: app/src/ui/add_account.rs:3164 app/src/ui/add_account.rs:3254
 #: app/src/ui/add_account.rs:3711 app/src/ui/gmail_password_page.rs:128
 #: app/src/ui/gmail_password_page.rs:133 app/src/ui/gmail_password_page.rs:262
-#: app/src/ui/window.rs:1518
+#: app/src/ui/window.rs:1523
 msgid "Sign In"
 msgstr "ログイン"
 
@@ -5239,7 +5239,7 @@ msgstr "後で"
 #: app/src/ui/add_account.rs:1435 app/src/ui/calendar/editor.rs:1684
 #: app/src/ui/calendar/sidebar.rs:1008 app/src/ui/contacts_prefs.rs:496
 #: app/src/ui/invitation.rs:490 app/src/ui/permission.rs:42
-#: app/src/ui/permission.rs:66 app/src/ui/window.rs:1651
+#: app/src/ui/permission.rs:66 app/src/ui/window.rs:1656
 msgid "Grant Access"
 msgstr "アクセスを許可"
 
@@ -5260,7 +5260,7 @@ msgid "Penguin Mail keeps every message it downloads on this computer."
 msgstr "ダウンロードしたすべてのメッセージをこのコンピューターに保存します。"
 
 #: app/src/ui/add_account.rs:1589 app/src/ui/add_account.rs:1590
-#: app/src/ui/preferences.rs:1575
+#: app/src/ui/preferences.rs:1558
 msgid "Days"
 msgstr "日数"
 
@@ -5388,7 +5388,7 @@ msgid "Sign In Again"
 msgstr "再ログイン"
 
 #: app/src/ui/add_account.rs:3898 app/src/ui/own_project.rs:761
-#: app/src/ui/preferences/google_route.rs:259 app/src/ui/window.rs:2255
+#: app/src/ui/preferences/google_route.rs:259 app/src/ui/window.rs:2281
 msgid "Open Google Cloud"
 msgstr "Google Cloudを開く"
 
@@ -5477,13 +5477,14 @@ msgstr "開いているスレッドへの返信を下書きして"
 msgid "Choose a Model"
 msgstr "モデルを選択"
 
-#: app/src/ui/assistant.rs:127 app/src/ui/window.rs:3906
-#: app/src/ui/window.rs:3907
+#: app/src/ui/assistant.rs:127 app/src/ui/window.rs:3932
+#: app/src/ui/window.rs:3933
 msgid "Detach"
 msgstr "切り離す"
 
 #: app/src/ui/assistant.rs:128 app/src/ui/key_import.rs:213
-#: app/src/ui/key_import.rs:217 app/src/ui/window.rs:4586
+#: app/src/ui/key_import.rs:217 app/src/ui/signature_editor.rs:365
+#: app/src/ui/window.rs:4612
 msgid "Close"
 msgstr "閉じる"
 
@@ -5501,7 +5502,7 @@ msgstr ""
 
 #: app/src/ui/assistant.rs:183 app/src/ui/assistant.rs:188
 #: app/src/ui/assistant.rs:589 app/src/ui/calendar/scope.rs:152
-#: app/src/ui/composer/mod.rs:387 app/src/ui/composer/mod.rs:1930
+#: app/src/ui/composer/mod.rs:387 app/src/ui/composer/mod.rs:1937
 #: app/src/ui/window/shortcuts.rs:496
 msgid "Send"
 msgstr "送信"
@@ -5663,7 +5664,7 @@ msgid "No models found."
 msgstr "モデルが見つかりません。"
 
 #: app/src/ui/assistant/files.rs:69 app/src/ui/calendar/editor.rs:1734
-#: app/src/ui/composer/mod.rs:2257
+#: app/src/ui/composer/mod.rs:2264
 msgid "Remove {file}"
 msgstr "{file} を削除"
 
@@ -5703,8 +5704,8 @@ msgid "Edit {server}"
 msgstr "{server} を編集"
 
 #: app/src/ui/assistant_mcp_prefs.rs:137 app/src/ui/calendar/editor.rs:1729
-#: app/src/ui/composer/mod.rs:2253 app/src/ui/composer/recipients.rs:318
-#: app/src/ui/sender_prefs.rs:215 app/src/ui/window.rs:3504
+#: app/src/ui/composer/mod.rs:2260 app/src/ui/composer/recipients.rs:318
+#: app/src/ui/sender_prefs.rs:215 app/src/ui/window.rs:3530
 msgid "Remove"
 msgstr "削除"
 
@@ -5744,7 +5745,7 @@ msgstr ""
 "NAME=value を付けて設定します。URL は HTTP でサーバーに接続します。"
 
 #: app/src/ui/assistant_mcp_prefs.rs:272 app/src/ui/calendar/manage.rs:404
-#: app/src/ui/composer/mod.rs:2892 app/src/ui/smart_editor.rs:41
+#: app/src/ui/composer/mod.rs:2899 app/src/ui/smart_editor.rs:41
 #: app/src/ui/templates.rs:191
 msgid "Name"
 msgstr "名前"
@@ -5780,9 +5781,9 @@ msgstr "テスト"
 
 #: app/src/ui/assistant_mcp_prefs.rs:359 app/src/ui/calendar/editor.rs:184
 #: app/src/ui/calendar/quick.rs:225 app/src/ui/calendar/scope.rs:150
-#: app/src/ui/composer/editor.rs:346 app/src/ui/composer/mod.rs:2897
+#: app/src/ui/composer/editor.rs:346 app/src/ui/composer/mod.rs:2904
 #: app/src/ui/dav_edit.rs:48 app/src/ui/rules.rs:528
-#: app/src/ui/sender_prefs.rs:210 app/src/ui/sender_prefs/signature.rs:78
+#: app/src/ui/sender_prefs.rs:210 app/src/ui/sender_prefs/signature.rs:64
 #: app/src/ui/smart_editor.rs:320 app/src/ui/templates.rs:234
 #: app/src/ui/vacation.rs:42 app/src/ui/window/arrange.rs:169
 #: app/src/ui/window/save_contacts.rs:112
@@ -6269,7 +6270,7 @@ msgid "Declined"
 msgstr "不参加"
 
 #: app/src/ui/calendar/block.rs:613 app/src/ui/calendar/words.rs:190
-#: app/src/ui/preferences.rs:1381
+#: app/src/ui/preferences.rs:1364
 msgid "{start}–{end}"
 msgstr "{start}–{end}"
 
@@ -6383,11 +6384,11 @@ msgstr "終了日"
 msgid "End time"
 msgstr "終了時刻"
 
-#: app/src/ui/calendar/editor.rs:753 app/src/ui/preferences.rs:1527
+#: app/src/ui/calendar/editor.rs:753 app/src/ui/preferences.rs:1510
 msgid "Starts"
 msgstr "開始"
 
-#: app/src/ui/calendar/editor.rs:756 app/src/ui/preferences.rs:1529
+#: app/src/ui/calendar/editor.rs:756 app/src/ui/preferences.rs:1512
 msgid "Ends"
 msgstr "終了"
 
@@ -6528,8 +6529,8 @@ msgid "Could not attach {file}: {reason}"
 msgstr "{file} を添付できませんでした: {reason}"
 
 #: app/src/ui/calendar/editor.rs:1950 app/src/ui/composer/mod.rs:416
-#: app/src/ui/thread_list.rs:351 app/src/ui/thread_list.rs:357
-#: app/src/ui/thread_list.rs:1153
+#: app/src/ui/thread_list.rs:384 app/src/ui/thread_list.rs:390
+#: app/src/ui/thread_list.rs:1206
 msgid "More"
 msgstr "その他"
 
@@ -7051,7 +7052,7 @@ msgstr "終日"
 
 #: app/src/ui/calendar/mod.rs:1816 app/src/ui/calendar/mod.rs:3068
 #: app/src/ui/calendar/sidebar.rs:357 app/src/ui/calendar/words.rs:412
-#: app/src/ui/preferences.rs:1395 app/src/ui/preferences.rs:1583
+#: app/src/ui/preferences.rs:1378 app/src/ui/preferences.rs:1566
 msgid "%a"
 msgstr "%a"
 
@@ -7067,7 +7068,7 @@ msgstr "「{title}」を削除しました"
 msgid "Could not delete the event: {reason}"
 msgstr "予定を削除できませんでした: {reason}"
 
-#: app/src/ui/calendar/mod.rs:2206 app/src/ui/composer/mod.rs:1402
+#: app/src/ui/calendar/mod.rs:2206 app/src/ui/composer/mod.rs:1409
 #: app/src/ui/window/in_flight.rs:244 app/src/ui/window/scheduled.rs:98
 #: app/src/ui/window/shortcuts.rs:462
 msgid "Undo"
@@ -7692,12 +7693,12 @@ msgstr "開封通知を要求"
 msgid "Choose a Time…"
 msgstr "日時を選択…"
 
-#: app/src/ui/composer/mod.rs:392 app/src/ui/composer/mod.rs:2010
+#: app/src/ui/composer/mod.rs:392 app/src/ui/composer/mod.rs:2017
 #: app/src/ui/sidebar.rs:1546 app/src/ui/sidebar.rs:2247
 msgid "Send Later"
 msgstr "予約送信"
 
-#: app/src/ui/composer/mod.rs:394 app/src/ui/composer/mod.rs:1609
+#: app/src/ui/composer/mod.rs:394 app/src/ui/composer/mod.rs:1616
 msgid "Send (Ctrl+Enter)"
 msgstr "送信（Ctrl+Enter）"
 
@@ -7775,7 +7776,7 @@ msgstr "件名"
 msgid "Formatting"
 msgstr "書式"
 
-#: app/src/ui/composer/mod.rs:663 app/src/ui/composer/mod.rs:1368
+#: app/src/ui/composer/mod.rs:663 app/src/ui/composer/mod.rs:1375
 msgid "Forwarded Message"
 msgstr "転送メッセージ"
 
@@ -7783,281 +7784,282 @@ msgstr "転送メッセージ"
 msgid "Hide Cc and Bcc"
 msgstr "Cc と Bcc を隠す"
 
-#: app/src/ui/composer/mod.rs:1286
+#: app/src/ui/composer/mod.rs:1293
 msgid "Remove Quoted Text"
 msgstr "引用文を削除"
 
-#: app/src/ui/composer/mod.rs:1287
+#: app/src/ui/composer/mod.rs:1294
 msgid "Do Not Forward the Original"
 msgstr "元のメッセージを転送しない"
 
-#: app/src/ui/composer/mod.rs:1397
+#: app/src/ui/composer/mod.rs:1404
 msgid "Quoted text removed"
 msgstr "引用文を削除しました"
 
-#: app/src/ui/composer/mod.rs:1398
+#: app/src/ui/composer/mod.rs:1405
 msgid "Forwarded message removed"
 msgstr "転送メッセージを削除しました"
 
-#: app/src/ui/composer/mod.rs:1503
+#: app/src/ui/composer/mod.rs:1510
 msgid "Sending from {address}"
 msgstr "{address} から送信"
 
-#: app/src/ui/composer/mod.rs:1509
+#: app/src/ui/composer/mod.rs:1516
 msgid "Could not make a masked address: {reason}"
 msgstr "マスクアドレスを作成できませんでした: {reason}"
 
-#: app/src/ui/composer/mod.rs:1573
+#: app/src/ui/composer/mod.rs:1580
 msgid "Scheduled to send {when}"
 msgstr "{when} に送信予定"
 
-#: app/src/ui/composer/mod.rs:1597 app/src/ui/composer/mod.rs:2032
+#: app/src/ui/composer/mod.rs:1604 app/src/ui/composer/mod.rs:2039
 msgid "Choose a sender and enter a permitted address suffix."
 msgstr "差出人を選び、使用可能なアドレスの接尾辞を入力してください。"
 
-#: app/src/ui/composer/mod.rs:1769 app/src/ui/queued.rs:65
-#: app/src/ui/window/press.rs:461
+#: app/src/ui/composer/mod.rs:1776 app/src/ui/queued.rs:65
+#: app/src/ui/window/press.rs:463
 msgid "Cancel Send"
 msgstr "送信をキャンセル"
 
-#: app/src/ui/composer/mod.rs:1922 app/src/ui/window/scheduled.rs:97
+#: app/src/ui/composer/mod.rs:1929 app/src/ui/window/scheduled.rs:97
 msgid "Sending…"
 msgstr "送信中…"
 
-#: app/src/ui/composer/mod.rs:1962
+#: app/src/ui/composer/mod.rs:1969
 msgid "Attachment Missing?"
 msgstr "添付ファイルを忘れていませんか？"
 
-#: app/src/ui/composer/mod.rs:1964
+#: app/src/ui/composer/mod.rs:1971
 msgid "The message says “{sentence}” and carries no file."
 msgstr "本文に「{sentence}」とありますが、ファイルを添付していません。"
 
-#: app/src/ui/composer/mod.rs:1969
+#: app/src/ui/composer/mod.rs:1976
 msgid "Add Attachment"
 msgstr "添付ファイルを追加"
 
-#: app/src/ui/composer/mod.rs:1970
+#: app/src/ui/composer/mod.rs:1977
 msgid "Send Anyway"
 msgstr "そのまま送信"
 
-#: app/src/ui/composer/mod.rs:1988
+#: app/src/ui/composer/mod.rs:1995
 msgid "Send Without Encryption?"
 msgstr "暗号化せずに送信しますか？"
 
-#: app/src/ui/composer/mod.rs:1990
+#: app/src/ui/composer/mod.rs:1997
 msgid "This message was to go out encrypted, and it cannot be. {reason}"
 msgstr ""
 "このメッセージは暗号化して送信する予定でしたが、暗号化できません。{reason}"
 
-#: app/src/ui/composer/mod.rs:1996
+#: app/src/ui/composer/mod.rs:2003
 msgid "Send Readable"
 msgstr "暗号化せず送信"
 
-#: app/src/ui/composer/mod.rs:2011
+#: app/src/ui/composer/mod.rs:2018
 msgid "Penguin Mail sends it at this time while it runs, even in the tray."
 msgstr ""
 "Penguin Mail の起動中にこの時刻に送信します。トレイでの動作中も送信します。"
 
-#: app/src/ui/composer/mod.rs:2012
+#: app/src/ui/composer/mod.rs:2019
 msgid "Schedule"
 msgstr "予約"
 
-#: app/src/ui/composer/mod.rs:2074
+#: app/src/ui/composer/mod.rs:2081
 msgid "Draft saved, encrypted to your own key"
 msgstr "自分の鍵で暗号化して下書きを保存しました"
 
-#: app/src/ui/composer/mod.rs:2076
+#: app/src/ui/composer/mod.rs:2083
 msgid "Draft saved"
 msgstr "下書きを保存しました"
 
-#: app/src/ui/composer/mod.rs:2112
+#: app/src/ui/composer/mod.rs:2119
 msgid "Save as Draft?"
 msgstr "下書きとして保存しますか？"
 
-#: app/src/ui/composer/mod.rs:2116
+#: app/src/ui/composer/mod.rs:2123
 msgid "Discard"
 msgstr "破棄"
 
-#: app/src/ui/composer/mod.rs:2118
+#: app/src/ui/composer/mod.rs:2125
 msgid "Save Draft"
 msgstr "下書きを保存"
 
-#: app/src/ui/composer/mod.rs:2159
+#: app/src/ui/composer/mod.rs:2166
 msgid "Attach Files"
 msgstr "ファイルを添付"
 
-#: app/src/ui/composer/mod.rs:2195
+#: app/src/ui/composer/mod.rs:2202
 msgid "{files}  ·  {size}"
 msgstr "{files}  ·  {size}"
 
-#: app/src/ui/composer/mod.rs:2241
+#: app/src/ui/composer/mod.rs:2248
 #, fuzzy
 #| msgid "Open {file}, {size}"
 msgid "Open {file}"
 msgstr "{file} を開く、{size}"
 
-#: app/src/ui/composer/mod.rs:2294
+#: app/src/ui/composer/mod.rs:2301 app/src/ui/signature_editor.rs:225
 msgid "Bold (Ctrl+B)"
 msgstr "太字（Ctrl+B）"
 
-#: app/src/ui/composer/mod.rs:2295
+#: app/src/ui/composer/mod.rs:2302 app/src/ui/signature_editor.rs:231
 msgid "Italic (Ctrl+I)"
 msgstr "斜体（Ctrl+I）"
 
-#: app/src/ui/composer/mod.rs:2298
+#: app/src/ui/composer/mod.rs:2305
 msgid "Strikethrough (Ctrl+Shift+X)"
 msgstr "取り消し線（Ctrl+Shift+X）"
 
-#: app/src/ui/composer/mod.rs:2301
+#: app/src/ui/composer/mod.rs:2308
 msgid "Code (Ctrl+E)"
 msgstr "コード（Ctrl+E）"
 
-#: app/src/ui/composer/mod.rs:2338
+#: app/src/ui/composer/mod.rs:2345
 msgid "Link (Ctrl+K)"
 msgstr "リンク（Ctrl+K）"
 
-#: app/src/ui/composer/mod.rs:2348
+#: app/src/ui/composer/mod.rs:2355
 msgid "Bulleted List (Ctrl+Shift+8)"
 msgstr "箇条書き（Ctrl+Shift+8）"
 
-#: app/src/ui/composer/mod.rs:2353
+#: app/src/ui/composer/mod.rs:2360
 msgid "Numbered List (Ctrl+Shift+7)"
 msgstr "番号付きリスト（Ctrl+Shift+7）"
 
-#: app/src/ui/composer/mod.rs:2358
+#: app/src/ui/composer/mod.rs:2365
 msgid "Quote (Ctrl+Shift+9)"
 msgstr "引用（Ctrl+Shift+9）"
 
-#: app/src/ui/composer/mod.rs:2375
+#: app/src/ui/composer/mod.rs:2382
 msgid "Insert Image (Ctrl+Shift+P)"
 msgstr "画像を挿入（Ctrl+Shift+P）"
 
-#: app/src/ui/composer/mod.rs:2385
+#: app/src/ui/composer/mod.rs:2392
 msgid "Paragraph"
 msgstr "段落"
 
-#: app/src/ui/composer/mod.rs:2386
+#: app/src/ui/composer/mod.rs:2393
 msgid "Heading 1"
 msgstr "見出し 1"
 
-#: app/src/ui/composer/mod.rs:2387
+#: app/src/ui/composer/mod.rs:2394
 msgid "Heading 2"
 msgstr "見出し 2"
 
-#: app/src/ui/composer/mod.rs:2388
+#: app/src/ui/composer/mod.rs:2395
 msgid "Heading 3"
 msgstr "見出し 3"
 
-#: app/src/ui/composer/mod.rs:2389
+#: app/src/ui/composer/mod.rs:2396
 msgid "Code Block"
 msgstr "コードブロック"
 
-#: app/src/ui/composer/mod.rs:2403
+#: app/src/ui/composer/mod.rs:2410
 msgid "Turn Markdown into Formatting"
 msgstr "Markdown を書式に変換"
 
-#: app/src/ui/composer/mod.rs:2407
+#: app/src/ui/composer/mod.rs:2414
 msgid "Clear Formatting"
 msgstr "書式をクリア"
 
-#: app/src/ui/composer/mod.rs:2413
+#: app/src/ui/composer/mod.rs:2420
 msgid "Write in Markdown"
 msgstr "Markdown で作成"
 
-#: app/src/ui/composer/mod.rs:2420 app/src/ui/composer/mod.rs:2424
+#: app/src/ui/composer/mod.rs:2427 app/src/ui/composer/mod.rs:2431
 msgid "More Formatting"
 msgstr "その他の書式"
 
-#: app/src/ui/composer/mod.rs:2461
+#: app/src/ui/composer/mod.rs:2468
 msgid "Add a Link"
 msgstr "リンクを追加"
 
-#: app/src/ui/composer/mod.rs:2467
+#: app/src/ui/composer/mod.rs:2474
 msgid "Text"
 msgstr "テキスト"
 
-#: app/src/ui/composer/mod.rs:2479
+#: app/src/ui/composer/mod.rs:2486
 msgid "Add Link"
 msgstr "リンクを追加"
 
-#: app/src/ui/composer/mod.rs:2515
+#: app/src/ui/composer/mod.rs:2522
 msgid "Markdown formatted"
 msgstr "Markdown の書式を適用しました"
 
-#: app/src/ui/composer/mod.rs:2634
+#: app/src/ui/composer/mod.rs:2641
 msgid "Pasted as rich text"
 msgstr "リッチテキストとして貼り付けました"
 
-#: app/src/ui/composer/mod.rs:2635
+#: app/src/ui/composer/mod.rs:2642
 msgid "Paste as Plain Text"
 msgstr "プレーンテキストとして貼り付け"
 
-#: app/src/ui/composer/mod.rs:2669
+#: app/src/ui/composer/mod.rs:2676
 msgid "Editing as Markdown"
 msgstr "Markdown として編集中"
 
-#: app/src/ui/composer/mod.rs:2705
+#: app/src/ui/composer/mod.rs:2712 app/src/ui/signature_editor.rs:334
 msgid "Images"
 msgstr "画像"
 
-#: app/src/ui/composer/mod.rs:2710
+#: app/src/ui/composer/mod.rs:2717 app/src/ui/signature_editor.rs:327
+#: app/src/ui/signature_editor.rs:339
 msgid "Insert Image"
 msgstr "画像を挿入"
 
-#: app/src/ui/composer/mod.rs:2754
+#: app/src/ui/composer/mod.rs:2761 app/src/ui/signature_editor.rs:404
 msgid "Could not read the file: {reason}"
 msgstr "ファイルを読み取れませんでした: {reason}"
 
-#: app/src/ui/composer/mod.rs:2836
+#: app/src/ui/composer/mod.rs:2843
 msgid "No Templates Yet"
 msgstr "テンプレートはまだありません"
 
-#: app/src/ui/composer/mod.rs:2886
+#: app/src/ui/composer/mod.rs:2893
 msgid "Save as Template"
 msgstr "テンプレートとして保存"
 
-#: app/src/ui/composer/mod.rs:2888
+#: app/src/ui/composer/mod.rs:2895
 msgid "Placeholders such as {{first_name}} fill in each time you use it."
 msgstr "{{first_name}} などのプレースホルダーは、使用するたびに置き換えます。"
 
-#: app/src/ui/composer/mod.rs:2911 app/src/ui/templates.rs:281
+#: app/src/ui/composer/mod.rs:2918 app/src/ui/templates.rs:281
 msgid "Give the template a name"
 msgstr "テンプレート名を入力"
 
-#: app/src/ui/composer/mod.rs:2919
+#: app/src/ui/composer/mod.rs:2926
 msgid "Template saved"
 msgstr "テンプレートを保存しました"
 
-#: app/src/ui/composer/mod.rs:2922
+#: app/src/ui/composer/mod.rs:2929
 msgid "Template not saved: {reason}"
 msgstr "テンプレートを保存できませんでした: {reason}"
 
-#: app/src/ui/composer/mod.rs:3045
+#: app/src/ui/composer/mod.rs:3052
 msgid "This looks like Markdown"
 msgstr "Markdown 形式のようです"
 
-#: app/src/ui/composer/mod.rs:3051
+#: app/src/ui/composer/mod.rs:3058
 msgid "Format"
 msgstr "書式を適用"
 
-#: app/src/ui/composer/mod.rs:3052
+#: app/src/ui/composer/mod.rs:3059
 msgid "Turn the Markdown into rich text"
 msgstr "Markdown をリッチテキストに変換"
 
-#: app/src/ui/composer/mod.rs:3058 app/src/ui/composer/mod.rs:3062
+#: app/src/ui/composer/mod.rs:3065 app/src/ui/composer/mod.rs:3069
 msgid "Dismiss"
 msgstr "閉じる"
 
-#: app/src/ui/composer/mod.rs:3145
+#: app/src/ui/composer/mod.rs:3152
 msgid "The draft is kept on this computer, so you can finish it later here."
 msgstr "下書きはこのコンピューターに保存するため、後でここで続きを書けます。"
 
-#: app/src/ui/composer/mod.rs:3149
+#: app/src/ui/composer/mod.rs:3156
 msgid ""
 "The draft is kept in {provider}, so you can finish it later on any device."
 msgstr "下書きは {provider} に保存するため、後でどの端末でも続きを書けます。"
 
-#: app/src/ui/composer/mod.rs:3153
+#: app/src/ui/composer/mod.rs:3160
 msgid ""
 "The draft is kept in your account, so you can finish it later on any device."
 msgstr "下書きはアカウントに保存するため、後でどの端末でも続きを書けます。"
@@ -8074,7 +8076,7 @@ msgstr "{recipient} を削除"
 msgid "Press Delete to remove"
 msgstr "Delete キーで削除"
 
-#: app/src/ui/composer/richbuffer.rs:45
+#: app/src/ui/composer/richbuffer.rs:46
 msgid "Picture"
 msgstr "画像"
 
@@ -8221,7 +8223,7 @@ msgid "Export…"
 msgstr "エクスポート…"
 
 #: app/src/ui/conversation.rs:279 app/src/ui/conversation.rs:656
-#: app/src/ui/window.rs:3787
+#: app/src/ui/window.rs:3813
 msgid "Customize Toolbar…"
 msgstr "ツールバーをカスタマイズ…"
 
@@ -8256,8 +8258,9 @@ msgid "Mute"
 msgstr "ミュート"
 
 #: app/src/ui/conversation.rs:472 app/src/ui/conversation.rs:626
-#: app/src/ui/conversation.rs:1112 app/src/ui/toolbar/customize.rs:21
-#: app/src/ui/window/message_menu.rs:133 app/src/ui/window/smart_trash.rs:82
+#: app/src/ui/conversation.rs:1112 app/src/ui/thread_row.rs:202
+#: app/src/ui/toolbar/customize.rs:21 app/src/ui/window/message_menu.rs:133
+#: app/src/ui/window/smart_trash.rs:90
 msgid "Move to Trash"
 msgstr "ゴミ箱に移動"
 
@@ -8382,7 +8385,7 @@ msgid "Not Junk (Ctrl+Shift+J)"
 msgstr "迷惑メールではない（Ctrl+Shift+J）"
 
 #: app/src/ui/conversation.rs:1111 app/src/ui/window/message_menu.rs:134
-#: app/src/ui/window/press.rs:447
+#: app/src/ui/window/press.rs:449
 msgid "Delete Forever"
 msgstr "完全に削除"
 
@@ -8783,7 +8786,7 @@ msgstr ""
 msgid "Allow Hide My Email"
 msgstr "メールアドレスの非公開を許可"
 
-#: app/src/ui/hide_my_email.rs:652 app/src/ui/window.rs:4000
+#: app/src/ui/hide_my_email.rs:652 app/src/ui/window.rs:4026
 msgid "Add an account first"
 msgstr "先にアカウントを追加してください"
 
@@ -9242,7 +9245,7 @@ msgid "{folder}, always shown"
 msgstr ""
 
 #: app/src/ui/manage_folders.rs:402 app/src/ui/manage_folders.rs:508
-#: app/src/ui/preferences.rs:696
+#: app/src/ui/preferences.rs:679
 msgid "This account is not syncing yet"
 msgstr "このアカウントはまだ同期していません"
 
@@ -9252,7 +9255,7 @@ msgstr "このアカウントはまだ同期していません"
 msgid "Could not change the subscription: {reason}"
 msgstr "色を変更できませんでした: {reason}"
 
-#: app/src/ui/mod.rs:557
+#: app/src/ui/mod.rs:558
 msgid "Gray"
 msgstr "灰色"
 
@@ -9261,7 +9264,7 @@ msgid "The mail is already there"
 msgstr "メールはすでにそこにあります"
 
 #: app/src/ui/moving.rs:64 app/src/ui/moving.rs:106
-#: app/src/ui/window/press.rs:348
+#: app/src/ui/window/press.rs:350
 msgid "Mail cannot go there"
 msgstr "そこにはメールを移動できません"
 
@@ -9564,11 +9567,11 @@ msgid ""
 "server reports."
 msgstr "署名、差出人アドレス、サーバー、連絡先、サーバーが報告する使用容量。"
 
-#: app/src/ui/preferences.rs:489 app/src/ui/preferences.rs:759
+#: app/src/ui/preferences.rs:489 app/src/ui/preferences.rs:742
 msgid "No Accounts Yet"
 msgstr "アカウントがありません"
 
-#: app/src/ui/preferences.rs:491 app/src/ui/preferences.rs:761
+#: app/src/ui/preferences.rs:491 app/src/ui/preferences.rs:744
 msgid "Add an account to choose a sender and write signatures."
 msgstr "アカウントを追加すると、差出人の選択や署名の作成ができます。"
 
@@ -9596,82 +9599,82 @@ msgstr "{account} 経由でサインイン"
 msgid "Signature"
 msgstr "署名"
 
-#: app/src/ui/preferences.rs:654
+#: app/src/ui/preferences.rs:646
 #, fuzzy
 #| msgid ""
 #| "Used by this account and addresses without their own signature. Markdown "
 #| "works. <email> becomes the sending address, including its suffix; "
 #| "<domain> becomes its domain."
 msgid ""
-"Used by this account and addresses without their own signature. Markdown or "
-"HTML works. <email> becomes the sending address, including its suffix; "
-"<domain> becomes its domain."
+"Used by this account and addresses without their own signature. Use Edit "
+"Source to write Markdown or HTML. <email> becomes the sending address, "
+"including its suffix. <domain> becomes its domain."
 msgstr ""
 "このアカウントと、独自の署名がないアドレスで使われます。Markdown が使えます。"
 "<email> は接尾辞を含む送信アドレスに、<domain> はそのドメインに置き換わりま"
 "す。"
 
-#: app/src/ui/preferences.rs:662 app/src/ui/sender_prefs.rs:127
+#: app/src/ui/preferences.rs:650 app/src/ui/sender_prefs.rs:127
 #: app/src/ui/sender_prefs/signature.rs:22
 msgid "Signature for {account}"
 msgstr "{account}の署名"
 
-#: app/src/ui/preferences.rs:676
+#: app/src/ui/preferences.rs:659
 msgid "Import from Gmail"
 msgstr "Gmailからインポート"
 
-#: app/src/ui/preferences.rs:712
+#: app/src/ui/preferences.rs:698
 msgid "Imported the signature from Gmail"
 msgstr "Gmailから署名をインポートしました"
 
-#: app/src/ui/preferences.rs:716
+#: app/src/ui/preferences.rs:702
 msgid "Gmail has no signature for this account"
 msgstr "Gmailにこのアカウントの署名がありません"
 
-#: app/src/ui/preferences.rs:719
+#: app/src/ui/preferences.rs:705
 msgid "Could not import: {reason}"
 msgstr "インポートできませんでした: {reason}"
 
-#: app/src/ui/preferences.rs:754 app/src/ui/window/shortcuts.rs:239
+#: app/src/ui/preferences.rs:737 app/src/ui/window/shortcuts.rs:239
 msgid "Writing"
 msgstr "作成"
 
-#: app/src/ui/preferences.rs:770 app/src/ui/preferences/accounts.rs:188
+#: app/src/ui/preferences.rs:753 app/src/ui/preferences/accounts.rs:188
 msgid "New Messages"
 msgstr "新規メッセージ"
 
-#: app/src/ui/preferences.rs:774
+#: app/src/ui/preferences.rs:757
 msgid "New Messages Start As"
 msgstr "新規メッセージの形式"
 
-#: app/src/ui/preferences.rs:776
+#: app/src/ui/preferences.rs:759
 msgid "Rich text styles the words themselves; Markdown shows its marks"
 msgstr "リッチテキストは文字に書式を適用し、Markdownは書式記号を表示します"
 
 #. The seconds change every second and the name stays put, so a
 #. screen reader is not told each one.
-#: app/src/ui/preferences.rs:783 app/src/ui/sidebar.rs:86
+#: app/src/ui/preferences.rs:766 app/src/ui/sidebar.rs:86
 #: app/src/ui/sidebar.rs:99
 msgid "Undo Send"
 msgstr "送信の取り消し"
 
-#: app/src/ui/preferences.rs:785
+#: app/src/ui/preferences.rs:768
 msgid "How long you can take a message back after sending it"
 msgstr "送信後に取り消せる時間"
 
-#: app/src/ui/preferences.rs:792
+#: app/src/ui/preferences.rs:775
 msgid "Check for Missing Attachments"
 msgstr "添付忘れを確認"
 
-#: app/src/ui/preferences.rs:794
+#: app/src/ui/preferences.rs:777
 msgid "Ask before sending a message that promises a file and carries none"
 msgstr "ファイルに言及しているのに添付がない場合、送信前に確認します"
 
-#: app/src/ui/preferences.rs:828
+#: app/src/ui/preferences.rs:811
 msgid "Signing and Encryption"
 msgstr "署名と暗号化"
 
-#: app/src/ui/preferences.rs:830
+#: app/src/ui/preferences.rs:813
 msgid ""
 "Penguin Mail signs and encrypts through GnuPG, which holds your keys and "
 "asks for your passphrase itself."
@@ -9679,49 +9682,49 @@ msgstr ""
 "Penguin MailはGnuPGで署名と暗号化を行います。GnuPGが鍵を管理し、パスフレーズ"
 "を求めます。"
 
-#: app/src/ui/preferences.rs:835
+#: app/src/ui/preferences.rs:818
 msgid "Your OpenPGP Keys"
 msgstr "自分のOpenPGP鍵"
 
-#: app/src/ui/preferences.rs:836
+#: app/src/ui/preferences.rs:819
 msgid "Asking gpg…"
 msgstr "gpgに問い合わせ中…"
 
-#: app/src/ui/preferences.rs:840
+#: app/src/ui/preferences.rs:823
 msgid "Your S/MIME Certificates"
 msgstr "自分のS/MIME証明書"
 
-#: app/src/ui/preferences.rs:841
+#: app/src/ui/preferences.rs:824
 msgid "Asking gpgsm…"
 msgstr "gpgsmに問い合わせ中…"
 
-#: app/src/ui/preferences.rs:848
+#: app/src/ui/preferences.rs:831
 msgid "Sign My Messages by Default"
 msgstr "標準でメッセージに署名"
 
-#: app/src/ui/preferences.rs:849
+#: app/src/ui/preferences.rs:832
 msgid "New messages open with Sign turned on"
 msgstr "新規メッセージで署名を有効にします"
 
-#: app/src/ui/preferences.rs:855
+#: app/src/ui/preferences.rs:838
 msgid "Encrypt When I Can"
 msgstr "可能な場合は暗号化"
 
-#: app/src/ui/preferences.rs:857
+#: app/src/ui/preferences.rs:840
 msgid "Turn Encrypt on as soon as every recipient has a key or a certificate"
 msgstr "すべての宛先に鍵または証明書がそろったら暗号化を有効にします"
 
-#: app/src/ui/preferences.rs:946
+#: app/src/ui/preferences.rs:929
 msgid "gpg could not be asked: {reason}"
 msgstr "gpgに問い合わせできませんでした: {reason}"
 
-#: app/src/ui/preferences.rs:965
+#: app/src/ui/preferences.rs:948
 msgid "gpgsm could not be asked: {reason}"
 msgstr "gpgsmに問い合わせできませんでした: {reason}"
 
 #. The verb agrees with the programs: "gpg, which holds" but "gpg and
 #. gpgsm, which hold".
-#: app/src/ui/preferences.rs:974
+#: app/src/ui/preferences.rs:957
 msgid ""
 "Penguin Mail signs and encrypts through {programs}, which holds your keys "
 "and asks for your passphrase itself."
@@ -9732,11 +9735,11 @@ msgstr[0] ""
 "Penguin Mailは{programs}で署名と暗号化を行います。これらのプログラムが鍵を管"
 "理し、パスフレーズを求めます。"
 
-#: app/src/ui/preferences.rs:1006 app/src/ui/preferences.rs:1019
+#: app/src/ui/preferences.rs:989 app/src/ui/preferences.rs:1002
 msgid "Spelling"
 msgstr "スペルチェック"
 
-#: app/src/ui/preferences.rs:1008
+#: app/src/ui/preferences.rs:991
 msgid ""
 "No dictionaries are installed, so Penguin Mail is not checking spelling. "
 "Install a Hunspell dictionary, such as hunspell-en-us or hunspell-pt-pt, and "
@@ -9746,66 +9749,66 @@ msgstr ""
 "やhunspell-pt-ptなどのHunspell辞書をインストールして、作成ウィンドウを開き直"
 "してください。"
 
-#: app/src/ui/preferences.rs:1021
+#: app/src/ui/preferences.rs:1004
 msgid ""
 "The language each account checks spelling in. Dictionaries installed: "
 "{languages}."
 msgstr ""
 "各アカウントでスペルを確認する言語。インストール済みの辞書: {languages}。"
 
-#: app/src/ui/preferences.rs:1033
+#: app/src/ui/preferences.rs:1016
 msgid "System: {language}"
 msgstr "システム: {language}"
 
-#: app/src/ui/preferences.rs:1048
+#: app/src/ui/preferences.rs:1031
 msgid "All Installed Languages"
 msgstr "インストール済みのすべての言語"
 
-#: app/src/ui/preferences.rs:1091
+#: app/src/ui/preferences.rs:1074
 msgid "Sync"
 msgstr "同期"
 
-#: app/src/ui/preferences.rs:1099
+#: app/src/ui/preferences.rs:1082
 msgid "Checking"
 msgstr "確認"
 
-#: app/src/ui/preferences.rs:1105
+#: app/src/ui/preferences.rs:1088
 msgid "Check for New Mail"
 msgstr "新着メールを確認"
 
-#: app/src/ui/preferences.rs:1114
+#: app/src/ui/preferences.rs:1097
 msgid "Storage"
 msgstr "保存"
 
-#: app/src/ui/preferences.rs:1122
+#: app/src/ui/preferences.rs:1105
 msgid "Keep Mail on This Computer For"
 msgstr "このコンピューターにメールを保存する期間"
 
-#: app/src/ui/preferences.rs:1143
+#: app/src/ui/preferences.rs:1126
 msgid "Message text kept for opening offline"
 msgstr "オフラインで開くために保存するメッセージ本文"
 
-#: app/src/ui/preferences.rs:1146
+#: app/src/ui/preferences.rs:1129
 msgid "Message Cache"
 msgstr "メッセージキャッシュ"
 
-#: app/src/ui/preferences.rs:1155
+#: app/src/ui/preferences.rs:1138
 msgid "100 messages"
 msgstr "100 件"
 
-#: app/src/ui/preferences.rs:1156
+#: app/src/ui/preferences.rs:1139
 msgid "300 messages"
 msgstr "300 件"
 
-#: app/src/ui/preferences.rs:1157
+#: app/src/ui/preferences.rs:1140
 msgid "1,000 messages"
 msgstr "1,000 件"
 
-#: app/src/ui/preferences.rs:1161
+#: app/src/ui/preferences.rs:1144
 msgid "Download Recent Inbox Messages"
 msgstr "受信トレイの最近のメッセージをダウンロード"
 
-#: app/src/ui/preferences.rs:1162
+#: app/src/ui/preferences.rs:1145
 msgid ""
 "Download message text in each account for faster opening and offline "
 "reading. Attachments and remote images aren't downloaded."
@@ -9814,148 +9817,148 @@ msgstr ""
 "ラインでも読めるようにします。添付ファイルとリモート画像はダウンロードしませ"
 "ん。"
 
-#: app/src/ui/preferences.rs:1189
+#: app/src/ui/preferences.rs:1172
 msgid "Startup"
 msgstr "起動"
 
-#: app/src/ui/preferences.rs:1192
+#: app/src/ui/preferences.rs:1175
 msgid "Start in the Tray at Login"
 msgstr "ログイン時にトレイで起動"
 
-#: app/src/ui/preferences.rs:1207
+#: app/src/ui/preferences.rs:1190
 msgid "Not available in demo mode"
 msgstr "デモモードでは利用できません"
 
-#: app/src/ui/preferences.rs:1215
+#: app/src/ui/preferences.rs:1198
 msgid "Look for a new release once a day"
 msgstr "1日1回、新しいリリースを確認します"
 
-#: app/src/ui/preferences.rs:1256
+#: app/src/ui/preferences.rs:1239
 msgid "{used} of {limit}"
 msgstr "{limit}中{used}"
 
-#: app/src/ui/preferences.rs:1268
+#: app/src/ui/preferences.rs:1251
 msgid "{amount} · Full"
 msgstr "{amount} · 空き容量なし"
 
-#: app/src/ui/preferences.rs:1270
+#: app/src/ui/preferences.rs:1253
 msgid "{amount} · Nearly full"
 msgstr "{amount} · 空き容量わずか"
 
-#: app/src/ui/preferences.rs:1282
+#: app/src/ui/preferences.rs:1265
 msgid "Senders Who May Load Images"
 msgstr "画像の読み込みを許可する差出人"
 
-#: app/src/ui/preferences.rs:1283 app/src/ui/preferences.rs:1292
+#: app/src/ui/preferences.rs:1266 app/src/ui/preferences.rs:1275
 msgid "Nobody yet"
 msgstr "まだいません"
 
-#: app/src/ui/preferences.rs:1294
+#: app/src/ui/preferences.rs:1277
 msgid "{count} sender"
 msgid_plural "{count} senders"
 msgstr[0] "{count}人の差出人"
 
-#: app/src/ui/preferences.rs:1304
+#: app/src/ui/preferences.rs:1287
 msgid "Anyone at this domain"
 msgstr "このドメインの全員"
 
-#: app/src/ui/preferences.rs:1306
+#: app/src/ui/preferences.rs:1289
 msgid "This address"
 msgstr "このアドレス"
 
-#: app/src/ui/preferences.rs:1311
+#: app/src/ui/preferences.rs:1294
 msgid "Stop Loading Images from This Sender"
 msgstr "この差出人の画像の自動読み込みを停止"
 
-#: app/src/ui/preferences.rs:1318
+#: app/src/ui/preferences.rs:1301
 msgid "Stop loading images from {sender}"
 msgstr "{sender}の画像の自動読み込みを停止"
 
-#: app/src/ui/preferences.rs:1388
+#: app/src/ui/preferences.rs:1371
 msgid "Monday to Friday"
 msgstr "月曜日から金曜日"
 
-#: app/src/ui/preferences.rs:1389
+#: app/src/ui/preferences.rs:1372
 msgid "Every day of the week"
 msgstr "毎日"
 
-#: app/src/ui/preferences.rs:1390
+#: app/src/ui/preferences.rs:1373
 msgid "No days"
 msgstr "曜日未選択"
 
-#: app/src/ui/preferences.rs:1397
+#: app/src/ui/preferences.rs:1380
 msgid ", "
 msgstr "、"
 
-#: app/src/ui/preferences.rs:1400
+#: app/src/ui/preferences.rs:1383
 msgid "{time}, {days}"
 msgstr "{time}、{days}"
 
-#: app/src/ui/preferences.rs:1463
+#: app/src/ui/preferences.rs:1446
 msgid "Time Format"
 msgstr "時刻の形式"
 
-#: app/src/ui/preferences.rs:1467
+#: app/src/ui/preferences.rs:1450
 msgid "Automatic follows the system clock format"
 msgstr "自動ではシステムの時刻形式に従います"
 
-#: app/src/ui/preferences.rs:1481
+#: app/src/ui/preferences.rs:1464
 msgid "Week Starts On"
 msgstr "週の始まり"
 
-#: app/src/ui/preferences.rs:1486
+#: app/src/ui/preferences.rs:1469
 msgid "Automatic follows the locale's own first day of the week"
 msgstr "自動では、ロケールに応じた週の始まりを使います"
 
-#: app/src/ui/preferences.rs:1500
+#: app/src/ui/preferences.rs:1483
 msgid "Working Hours"
 msgstr "勤務時間"
 
-#: app/src/ui/preferences.rs:1519
+#: app/src/ui/preferences.rs:1502
 msgid "Hours"
 msgstr "時間"
 
-#: app/src/ui/preferences.rs:1570
+#: app/src/ui/preferences.rs:1553
 msgid "–"
 msgstr "～"
 
-#: app/src/ui/preferences.rs:1628
+#: app/src/ui/preferences.rs:1611
 msgid "Show Only Subscribed Folders"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1630
+#: app/src/ui/preferences.rs:1613
 msgid ""
 "Folders you do not subscribe to stay out of the sidebar. Choose them in "
 "Manage Folders, in the account's menu."
 msgstr ""
 
-#: app/src/ui/preferences.rs:1674
+#: app/src/ui/preferences.rs:1657
 #, fuzzy
 #| msgid "Could not change the color: {reason}"
 msgid "Could not change the folders: {reason}"
 msgstr "色を変更できませんでした: {reason}"
 
-#: app/src/ui/preferences.rs:1718
+#: app/src/ui/preferences.rs:1701
 msgid "Never Translate"
 msgstr "翻訳しない言語"
 
-#: app/src/ui/preferences.rs:1720
+#: app/src/ui/preferences.rs:1703
 msgid "Messages in these languages get no offer to translate them"
 msgstr "これらの言語のメッセージでは翻訳を提案しません"
 
-#: app/src/ui/preferences.rs:1749
+#: app/src/ui/preferences.rs:1732
 msgid "Follow System"
 msgstr "システムに従う"
 
-#: app/src/ui/preferences.rs:1753
+#: app/src/ui/preferences.rs:1736
 msgid "Language"
 msgstr "言語"
 
-#: app/src/ui/preferences.rs:1754
+#: app/src/ui/preferences.rs:1737
 msgid "Penguin Mail shows a new language after a restart"
 msgstr "再起動後に新しい言語で表示します"
 
-#: app/src/ui/preferences.rs:1835 app/src/ui/sender_prefs/signature.rs:28
+#: app/src/ui/preferences.rs:1818 app/src/ui/sender_prefs/signature.rs:28
 msgid "No signature"
 msgstr "署名なし"
 
@@ -10031,7 +10034,7 @@ msgstr "最後に使ったカレンダーアカウント"
 msgid "Same as New Messages"
 msgstr "新規メッセージと同じ"
 
-#: app/src/ui/preferences/accounts.rs:204 app/src/ui/thread_list.rs:275
+#: app/src/ui/preferences/accounts.rs:204 app/src/ui/thread_list.rs:308
 msgid "All Inboxes"
 msgstr "すべての受信トレイ"
 
@@ -10050,7 +10053,7 @@ msgstr "{account}を下に移動"
 #: app/src/ui/preferences/dialog.rs:27 app/src/ui/preferences/dialog.rs:33
 #: app/src/ui/preferences/dialog.rs:82 app/src/ui/preferences/dialog.rs:83
 #: app/src/ui/preferences/dialog.rs:353 app/src/ui/preferences/dialog.rs:355
-#: app/src/ui/window.rs:3794 app/src/ui/window/shortcuts.rs:616
+#: app/src/ui/window.rs:3820 app/src/ui/window/shortcuts.rs:616
 msgid "Preferences"
 msgstr "設定"
 
@@ -10476,14 +10479,14 @@ msgstr "アカウントの署名を使用"
 msgid "Custom Signature"
 msgstr "カスタム署名"
 
-#: app/src/ui/sender_prefs/signature.rs:49
+#: app/src/ui/sender_prefs/signature.rs:38
 #, fuzzy
 #| msgid ""
 #| "Markdown works. <email> becomes the sending address, including its "
 #| "suffix; <domain> becomes its domain."
 msgid ""
-"Markdown or HTML works. <email> becomes the sending address, including its "
-"suffix; <domain> becomes its domain."
+"Use Edit Source to write Markdown or HTML. <email> becomes the sending "
+"address, including its suffix. <domain> becomes its domain."
 msgstr ""
 "Markdown が使えます。<email> は接尾辞を含む送信アドレスに、<domain> はそのド"
 "メインに置き換わります。"
@@ -10499,7 +10502,7 @@ msgid "Mailboxes"
 msgstr "メールボックス"
 
 #: app/src/ui/sidebar.rs:482 app/src/ui/sidebar.rs:536
-#: app/src/ui/sidebar.rs:2143 app/src/ui/thread_list.rs:372
+#: app/src/ui/sidebar.rs:2143 app/src/ui/thread_list.rs:405
 msgid "Mail"
 msgstr "メール"
 
@@ -10608,7 +10611,7 @@ msgstr "自動返信…"
 msgid "Rules…"
 msgstr "ルール…"
 
-#: app/src/ui/sidebar.rs:2722 app/src/ui/window.rs:3780
+#: app/src/ui/sidebar.rs:2722 app/src/ui/window.rs:3806
 msgid "Hide My Email…"
 msgstr "メールアドレスを非公開…"
 
@@ -10679,6 +10682,52 @@ msgstr "お気に入り"
 #: app/src/ui/window/customize_mailboxes.rs:583
 msgid "Smart Mailboxes"
 msgstr "スマートメールボックス"
+
+#: app/src/ui/signature_editor.rs:189
+#, fuzzy
+#| msgid "Edit Rule"
+msgid "Edit Visually"
+msgstr "ルールを編集"
+
+#: app/src/ui/signature_editor.rs:191
+#, fuzzy
+#| msgid "View Source"
+msgid "Edit Source"
+msgstr "ソースを表示"
+
+#: app/src/ui/signature_editor.rs:221
+#, fuzzy
+#| msgid "More Formatting"
+msgid "Signature Formatting"
+msgstr "その他の書式"
+
+#: app/src/ui/signature_editor.rs:285 app/src/ui/signature_editor.rs:302
+#, fuzzy
+#| msgid "Color"
+msgid "Text Color"
+msgstr "色"
+
+#: app/src/ui/signature_editor.rs:324
+msgid "Reset Text Color"
+msgstr ""
+
+#: app/src/ui/signature_editor.rs:362
+#, fuzzy
+#| msgid "Could not paste the image"
+msgid "Could Not Insert Image"
+msgstr "画像を貼り付けられませんでした"
+
+#: app/src/ui/signature_editor.rs:413
+#, fuzzy
+#| msgid "This file is too large to be a message."
+msgid "This image is too large for a signature."
+msgstr "このファイルはメッセージとしては大きすぎます。"
+
+#: app/src/ui/signature_editor.rs:425
+#, fuzzy
+#| msgid "This file could not be read."
+msgid "This file could not be read as an image."
+msgstr "このファイルを読み込めませんでした。"
 
 #: app/src/ui/smart_editor.rs:43 app/src/ui/smart_editor.rs:203
 msgid "All Accounts"
@@ -10867,30 +10916,30 @@ msgstr "本文"
 msgid "New Template"
 msgstr "新しいテンプレート"
 
-#: app/src/ui/thread_list.rs:238
+#: app/src/ui/thread_list.rs:271
 msgid "No Mail"
 msgstr "メールがありません"
 
 #. The two search terms are Gmail's own and stay in English.
-#: app/src/ui/thread_list.rs:256
+#: app/src/ui/thread_list.rs:289
 msgid "Search mail, e.g. from:ann has:attachment"
 msgstr "メールを検索、例: from:ann has:attachment"
 
-#: app/src/ui/thread_list.rs:295 app/src/ui/thread_list.rs:315
+#: app/src/ui/thread_list.rs:328 app/src/ui/thread_list.rs:348
 msgid "Show Mailboxes"
 msgstr "メールボックスを表示"
 
-#: app/src/ui/thread_list.rs:300
+#: app/src/ui/thread_list.rs:333
 msgid "New Message (C)"
 msgstr "新規メッセージ（C）"
 
-#: app/src/ui/thread_list.rs:305
+#: app/src/ui/thread_list.rs:338
 msgid "Search (/)"
 msgstr "検索（/）"
 
 #. The tooltips already say what these do; the spoken name takes
 #. the words and leaves the keys to a property of their own.
-#: app/src/ui/thread_list.rs:314
+#: app/src/ui/thread_list.rs:347
 msgid "Search mail"
 msgstr "メールを検索"
 
@@ -10933,31 +10982,31 @@ msgstr "新着メールを確認"
 msgid "Checking for mail"
 msgstr "新着メールを確認中"
 
-#: app/src/ui/thread_row.rs:102
+#: app/src/ui/thread_row.rs:104
 msgid "VIP"
 msgstr "VIP"
 
-#: app/src/ui/thread_row.rs:127 app/src/ui/window.rs:414
+#: app/src/ui/thread_row.rs:129 app/src/ui/window.rs:414
 msgid "Muted"
 msgstr "ミュート中"
 
-#: app/src/ui/thread_row.rs:324
+#: app/src/ui/thread_row.rs:358
 msgid "Unread invitation, {sender}, {subject}, {snippet}"
 msgstr "未読の招待、{sender}、{subject}、{snippet}"
 
-#: app/src/ui/thread_row.rs:325
+#: app/src/ui/thread_row.rs:359
 msgid "Unread, {sender}, {subject}, {snippet}"
 msgstr "未読、{sender}、{subject}、{snippet}"
 
-#: app/src/ui/thread_row.rs:326
+#: app/src/ui/thread_row.rs:360
 msgid "Invitation, {sender}, {subject}, {snippet}"
 msgstr "招待、{sender}、{subject}、{snippet}"
 
-#: app/src/ui/thread_row.rs:327
+#: app/src/ui/thread_row.rs:361
 msgid "{sender}, {subject}, {snippet}"
 msgstr "{sender}、{subject}、{snippet}"
 
-#: app/src/ui/thread_row.rs:525
+#: app/src/ui/thread_row.rs:574
 msgid "On the server, {lines}"
 msgstr "サーバー上、{lines}"
 
@@ -11238,7 +11287,7 @@ msgstr "メールを読み込めませんでした: {reason}"
 msgid "Added {account}. Downloading mail…"
 msgstr "{account}を追加しました。メールをダウンロード中…"
 
-#: app/src/ui/window.rs:366 app/src/ui/window.rs:3110
+#: app/src/ui/window.rs:366 app/src/ui/window.rs:3136
 msgid "{account} is signed in again."
 msgstr "{account}に再ログインしました。"
 
@@ -11363,69 +11412,69 @@ msgid "Moved {count} message to the Inbox"
 msgid_plural "Moved {count} messages to the Inbox"
 msgstr[0] "{count}件のメッセージを受信トレイに移動しました"
 
-#: app/src/ui/window.rs:949
+#: app/src/ui/window.rs:954
 msgid "Penguin Mail (Demo)"
 msgstr "Penguin Mail（デモ）"
 
-#: app/src/ui/window.rs:1393
+#: app/src/ui/window.rs:1398
 msgid "Could not read accounts: {reason}"
 msgstr "アカウントを読み取れませんでした: {reason}"
 
-#: app/src/ui/window.rs:2146
+#: app/src/ui/window.rs:2172
 msgid "Could not delete the mail: {reason}"
 msgstr "メールを削除できませんでした: {reason}"
 
-#: app/src/ui/window.rs:2253
+#: app/src/ui/window.rs:2279
 msgid "Turn On the {service}"
 msgstr "{service}を有効にする"
 
-#: app/src/ui/window.rs:2438 app/src/ui/window.rs:2441
+#: app/src/ui/window.rs:2464 app/src/ui/window.rs:2467
 msgid "Move to Inbox"
 msgstr "受信トレイに移動"
 
-#: app/src/ui/window.rs:2609 app/src/ui/window.rs:2614
+#: app/src/ui/window.rs:2635 app/src/ui/window.rs:2640
 #, fuzzy
 #| msgid "Search models"
 msgid "Search all folders"
 msgstr "モデルを検索"
 
-#: app/src/ui/window.rs:2683
+#: app/src/ui/window.rs:2709
 msgid "Select mail from one account to tag it."
 msgstr "タグを付けるには、1つのアカウントのメールを選んでください。"
 
-#: app/src/ui/window.rs:2695
+#: app/src/ui/window.rs:2721
 msgid "This account has no tags yet. Make one in Outlook."
 msgstr "このアカウントにはタグがありません。Outlookで作成してください。"
 
-#: app/src/ui/window.rs:2788
+#: app/src/ui/window.rs:2814
 msgid "Add an account to reply or forward"
 msgstr "返信や転送をするにはアカウントを追加してください"
 
-#: app/src/ui/window.rs:2893
+#: app/src/ui/window.rs:2919
 msgid "Could not include {file}: {reason}"
 msgstr "{file}を含められませんでした: {reason}"
 
-#: app/src/ui/window.rs:2974
+#: app/src/ui/window.rs:3000
 msgid "The server had already sent this message."
 msgstr "サーバーはこのメッセージを送信済みでした。"
 
-#: app/src/ui/window.rs:2979
+#: app/src/ui/window.rs:3005
 msgid "This message was canceled in another app and is no longer in Drafts."
 msgstr "このメッセージは別のアプリでキャンセルされ、下書きにも残っていません。"
 
-#: app/src/ui/window.rs:3295
+#: app/src/ui/window.rs:3321
 msgid "Continue in your browser"
 msgstr "ブラウザーで続けてください"
 
-#: app/src/ui/window.rs:3345
+#: app/src/ui/window.rs:3371
 msgid "This copy of Penguin Mail was built without Google sign-in."
 msgstr "このPenguin Mailは、Googleログイン機能なしでビルドされています。"
 
-#: app/src/ui/window.rs:3367
+#: app/src/ui/window.rs:3393
 msgid "Get a Release"
 msgstr "リリース版を入手"
 
-#: app/src/ui/window.rs:3490
+#: app/src/ui/window.rs:3516
 msgid ""
 "Could not check for messages the server holds to send later, so {account} "
 "stays: {reason}"
@@ -11433,86 +11482,86 @@ msgstr ""
 "サーバーが保持する予約送信メッセージを確認できなかったため、{account}を削除し"
 "ません: {reason}"
 
-#: app/src/ui/window.rs:3501
+#: app/src/ui/window.rs:3527
 msgid "Remove {account}?"
 msgstr "{account}を削除しますか？"
 
-#: app/src/ui/window.rs:3520
+#: app/src/ui/window.rs:3546
 msgid "Remove Anyway"
 msgstr "確認せずに削除"
 
-#: app/src/ui/window.rs:3533
+#: app/src/ui/window.rs:3559
 msgid "Removed {account}"
 msgstr "{account}を削除しました"
 
-#: app/src/ui/window.rs:3535
+#: app/src/ui/window.rs:3561
 msgid "Could not remove {account}: {reason}"
 msgstr "{account}を削除できませんでした: {reason}"
 
-#: app/src/ui/window.rs:3758
+#: app/src/ui/window.rs:3784
 msgid "Refresh"
 msgstr "更新"
 
-#: app/src/ui/window.rs:3762
+#: app/src/ui/window.rs:3788
 msgid "Show Declined Events"
 msgstr "辞退した予定を表示"
 
-#: app/src/ui/window.rs:3778
+#: app/src/ui/window.rs:3804
 msgid "Add Account…"
 msgstr "アカウントを追加…"
 
-#: app/src/ui/window.rs:3779
+#: app/src/ui/window.rs:3805
 msgid "New Smart Mailbox…"
 msgstr "新しいスマートメールボックス…"
 
-#: app/src/ui/window.rs:3791
+#: app/src/ui/window.rs:3817
 #, fuzzy
 #| msgid "Customize Toolbar…"
 msgid "Customize Mailboxes…"
 msgstr "ツールバーをカスタマイズ…"
 
-#: app/src/ui/window.rs:3795 app/src/ui/window/shortcuts.rs:813
+#: app/src/ui/window.rs:3821 app/src/ui/window/shortcuts.rs:813
 msgid "Keyboard Shortcuts"
 msgstr "キーボードショートカット"
 
-#: app/src/ui/window.rs:3804 app/src/ui/window.rs:3806
+#: app/src/ui/window.rs:3830 app/src/ui/window.rs:3832
 msgid "Main Menu"
 msgstr "メインメニュー"
 
-#: app/src/ui/window.rs:3871 app/src/ui/window.rs:3872
+#: app/src/ui/window.rs:3897 app/src/ui/window.rs:3898
 msgid "Dock"
 msgstr "Dock"
 
-#: app/src/ui/window.rs:4001
+#: app/src/ui/window.rs:4027
 msgid "Add a mail account first"
 msgstr "先にメールアカウントを追加してください"
 
 #. Translators: {account} is an email address.
-#: app/src/ui/window.rs:4252
+#: app/src/ui/window.rs:4278
 msgid "The calendar and contacts of {account} are connected."
 msgstr "{account} のカレンダーと連絡先を接続しました。"
 
-#: app/src/ui/window.rs:4368
+#: app/src/ui/window.rs:4394
 msgid "Open a message from the person first"
 msgstr "先にその人からのメッセージを開いてください"
 
-#: app/src/ui/window.rs:4469
+#: app/src/ui/window.rs:4495
 msgid "Penguin Mail shows the new language after a restart"
 msgstr "再起動後に新しい言語で表示します"
 
-#: app/src/ui/window.rs:4471 app/src/update/mod.rs:130
+#: app/src/ui/window.rs:4497 app/src/update/mod.rs:130
 msgid "Restart"
 msgstr "再起動"
 
-#: app/src/ui/window.rs:4535
+#: app/src/ui/window.rs:4561
 msgid "Show Rules"
 msgstr "ルールを表示"
 
-#: app/src/ui/window.rs:4561
+#: app/src/ui/window.rs:4587
 msgid "Messages That Will Not Download"
 msgstr "ダウンロードできないメッセージ"
 
-#: app/src/ui/window.rs:4563
+#: app/src/ui/window.rs:4589
 msgid ""
 "Penguin Mail could not download these from {address}'s server. It tries "
 "again at each check, except for a message too large to download."
@@ -11929,60 +11978,60 @@ msgstr "削除しました。送信しません。"
 msgid "Deleted. They will not be sent."
 msgstr "削除しました。いずれも送信しません。"
 
-#: app/src/ui/window/press.rs:287
+#: app/src/ui/window/press.rs:289
 msgid "Back in the Inbox"
 msgstr "受信トレイに戻しました"
 
-#: app/src/ui/window/press.rs:306
+#: app/src/ui/window/press.rs:308
 msgid "Will remind you {when}"
 msgstr "{when}に通知します"
 
-#: app/src/ui/window/press.rs:337
+#: app/src/ui/window/press.rs:339
 msgid "Drop mail on its own account's mailboxes"
 msgstr "同じアカウントのメールボックスにメールをドロップしてください"
 
-#: app/src/ui/window/press.rs:389
+#: app/src/ui/window/press.rs:391
 msgid "Moved to {mailbox}"
 msgstr "{mailbox}に移動しました"
 
-#: app/src/ui/window/press.rs:402
+#: app/src/ui/window/press.rs:404
 msgid "Delete This Conversation Forever?"
 msgstr "このスレッドを完全に削除しますか？"
 
-#: app/src/ui/window/press.rs:404
+#: app/src/ui/window/press.rs:406
 msgid "Delete {count} Conversation Forever?"
 msgid_plural "Delete {count} Conversations Forever?"
 msgstr[0] "{count}件のスレッドを完全に削除しますか？"
 
-#: app/src/ui/window/press.rs:409
+#: app/src/ui/window/press.rs:411
 msgid "Delete This Message Forever?"
 msgstr "このメッセージを完全に削除しますか？"
 
-#: app/src/ui/window/press.rs:411
+#: app/src/ui/window/press.rs:413
 msgid "Delete {count} Message Forever?"
 msgid_plural "Delete {count} Messages Forever?"
 msgstr[0] "{count}件のメッセージを完全に削除しますか？"
 
-#: app/src/ui/window/press.rs:419
+#: app/src/ui/window/press.rs:421
 msgid "{provider} deletes it from every device and cannot bring it back."
 msgstr "{provider}はすべての端末から削除します。復元できません。"
 
-#: app/src/ui/window/press.rs:423
+#: app/src/ui/window/press.rs:425
 msgid "{provider} deletes them from every device and cannot bring them back."
 msgstr "{provider}はすべての端末から削除します。いずれも復元できません。"
 
-#: app/src/ui/window/press.rs:426
+#: app/src/ui/window/press.rs:428
 msgid "The server deletes it from every device and cannot bring it back."
 msgstr "サーバーはすべての端末から削除します。復元できません。"
 
-#: app/src/ui/window/press.rs:428
+#: app/src/ui/window/press.rs:430
 msgid ""
 "Each account's server deletes them from every device and cannot bring them "
 "back."
 msgstr ""
 "各アカウントのサーバーはすべての端末から削除します。いずれも復元できません。"
 
-#: app/src/ui/window/press.rs:436
+#: app/src/ui/window/press.rs:438
 msgid ""
 "Mail in {accounts} stays in the Trash, since its server cannot delete mail "
 "for good."
@@ -11993,31 +12042,31 @@ msgstr[0] ""
 "{accounts}のメールは、サーバーが完全削除に対応していないため、ゴミ箱に残りま"
 "す。"
 
-#: app/src/ui/window/press.rs:461
+#: app/src/ui/window/press.rs:463
 msgid "Cancel Send (Delete)"
 msgstr "送信をキャンセル（Delete）"
 
-#: app/src/ui/window/press.rs:463
+#: app/src/ui/window/press.rs:465
 msgid "Delete from Outbox"
 msgstr "送信トレイから削除"
 
-#: app/src/ui/window/press.rs:464
+#: app/src/ui/window/press.rs:466
 msgid "Delete from Outbox (Delete)"
 msgstr "送信トレイから削除（Delete）"
 
-#: app/src/ui/window/press.rs:467
+#: app/src/ui/window/press.rs:469
 msgid "Cancel Reminder"
 msgstr "リマインダーをキャンセル"
 
-#: app/src/ui/window/press.rs:468
+#: app/src/ui/window/press.rs:470
 msgid "Cancel Reminder (Delete)"
 msgstr "リマインダーをキャンセル（Delete）"
 
-#: app/src/ui/window/press.rs:471
+#: app/src/ui/window/press.rs:473
 msgid "Dismiss Follow-Up"
 msgstr "フォローアップを非表示"
 
-#: app/src/ui/window/press.rs:472
+#: app/src/ui/window/press.rs:474
 msgid "Dismiss Follow-Up (Delete)"
 msgstr "フォローアップを非表示（Delete）"
 
@@ -12353,24 +12402,24 @@ msgstr "アシスタントを表示／非表示"
 msgid "Close window"
 msgstr "ウィンドウを閉じる"
 
-#: app/src/ui/window/smart_trash.rs:56
+#: app/src/ui/window/smart_trash.rs:64
 #, fuzzy
 #| msgid "Could not build the message: {reason}"
 msgid "Could not check sent messages: {reason}"
 msgstr "メッセージを作成できませんでした: {reason}"
 
-#: app/src/ui/window/smart_trash.rs:69
+#: app/src/ui/window/smart_trash.rs:77
 msgid "Don't Ask Again for This Smart Mailbox"
 msgstr ""
 
-#: app/src/ui/window/smart_trash.rs:71
+#: app/src/ui/window/smart_trash.rs:79
 #, fuzzy
 #| msgid "Moved {count} message to Trash"
 #| msgid_plural "Moved {count} messages to Trash"
 msgid "Also Move Sent Messages to Trash?"
 msgstr "{count}件のメッセージをゴミ箱に移動しました"
 
-#: app/src/ui/window/smart_trash.rs:74
+#: app/src/ui/window/smart_trash.rs:82
 msgid ""
 "Sent messages keep these conversations in “{mailbox}”. Move the matching "
 "sent messages to Trash too? You can undo this action."

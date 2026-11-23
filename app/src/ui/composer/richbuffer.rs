@@ -13,7 +13,8 @@ use mailrs_domain::translate::gettext;
 
 use super::web_picture;
 use crate::compose::OutgoingAttachment;
-use crate::richtext::{Block, BlockKind, RichBody, Span, Style};
+use crate::compose::html_signature::data_picture;
+use crate::richtext::{Block, BlockKind, RichBody, Span, Style, hex_color, read_color};
 
 /// A picture shown in the text: the anchor it sits in, where the picture
 /// comes from, and the words that describe it, which go out as its alt
@@ -52,6 +53,7 @@ pub fn describe(picture: &gtk::Picture, alt: &str) {
 pub const MARKER: &str = "marker";
 /// Link tags carry their target in the name, one tag per address.
 const LINK: &str = "link:";
+const COLOR: &str = "color:";
 /// The style tags, in the order the formatting bar shows them.
 pub const STYLES: [&str; 4] = ["bold", "italic", "strike", "code"];
 /// The line kinds, as tag names.
@@ -163,6 +165,34 @@ pub fn link_tag(buffer: &gtk::TextBuffer, url: &str) -> gtk::TextTag {
     tag
 }
 
+fn color_tag(buffer: &gtk::TextBuffer, color: [u8; 3]) -> gtk::TextTag {
+    let hex = hex_color(color);
+    let name = format!("{COLOR}{hex}");
+    let table = buffer.tag_table();
+    if let Some(tag) = table.lookup(&name) {
+        return tag;
+    }
+    let tag = gtk::TextTag::builder().name(&name).foreground(&hex).build();
+    table.add(&tag);
+    tag
+}
+
+pub fn color_range(
+    buffer: &gtk::TextBuffer,
+    from: &gtk::TextIter,
+    to: &gtk::TextIter,
+    color: Option<[u8; 3]>,
+) {
+    buffer.tag_table().foreach(|tag| {
+        if tag.name().is_some_and(|name| name.starts_with(COLOR)) {
+            buffer.remove_tag(tag, from, to);
+        }
+    });
+    if let Some(color) = color {
+        buffer.apply_tag(&color_tag(buffer, color), from, to);
+    }
+}
+
 /// Whether `tag` belongs to the rich body: a style, a link, a line kind or
 /// a list marker. The spelling checker's tags do not.
 fn is_body_tag(tag: &gtk::TextTag) -> bool {
@@ -171,6 +201,7 @@ fn is_body_tag(tag: &gtk::TextTag) -> bool {
             || BLOCKS.contains(&name.as_str())
             || name == MARKER
             || name.starts_with(LINK)
+            || name.starts_with(COLOR)
     })
 }
 
@@ -220,6 +251,8 @@ pub fn style_at(iter: &gtk::TextIter) -> (Style, Option<String>) {
             other => {
                 if let Some(url) = other.strip_prefix(LINK) {
                     link = Some(url.to_string());
+                } else if let Some(color) = other.strip_prefix(COLOR) {
+                    style.color = read_color(color);
                 }
             }
         }
@@ -507,6 +540,10 @@ pub fn write(
                 let start = at.offset();
                 if let Some((cid, attachment)) = carried {
                     insert_image(view, &mut at, cid, &span.text, &attachment.data, anchors);
+                } else if !block.is_quote()
+                    && let Some((_, data)) = data_picture(src)
+                {
+                    insert_picture(view, &mut at, src, &span.text, &data, anchors);
                 // A picture inside a quote came with someone else's mail,
                 // the quote's lists and headings included. Asking its host
                 // for a copy would tell that host this person has read the
@@ -529,21 +566,7 @@ pub fn write(
                 buffer.apply_tag_by_name(tag, &from, &to);
                 continue;
             }
-            let mut names: Vec<&str> = vec![tag];
-            for name in STYLES {
-                if has(span.style, name) {
-                    names.push(name);
-                }
-            }
-            let link = span
-                .link
-                .as_ref()
-                .and_then(|url| link_tag(buffer, url).name())
-                .map(|name| name.to_string());
-            if let Some(name) = &link {
-                names.push(name);
-            }
-            buffer.insert_with_tags_by_name(&mut at, &span.text, &names);
+            insert_span(buffer, &mut at, span, tag);
         }
         // An empty line still belongs to its kind while the writer is on it.
         if block.spans.is_empty()
@@ -703,22 +726,24 @@ pub fn insert_spans(
         if span.image.is_some() {
             continue;
         }
-        let mut names: Vec<&str> = vec![block_tag(kind)];
-        for name in STYLES {
-            if has(span.style, name) {
-                names.push(name);
-            }
-        }
-        let link = span
-            .link
-            .as_ref()
-            .and_then(|url| link_tag(buffer, url).name())
-            .map(|name| name.to_string());
-        if let Some(name) = &link {
-            names.push(name);
-        }
-        buffer.insert_with_tags_by_name(at, &span.text, &names);
+        insert_span(buffer, at, span, block_tag(kind));
     }
+}
+
+fn insert_span(buffer: &gtk::TextBuffer, at: &mut gtk::TextIter, span: &Span, block: &str) {
+    let mut names = vec![block];
+    names.extend(STYLES.into_iter().filter(|name| has(span.style, name)));
+    let link = span
+        .link
+        .as_ref()
+        .and_then(|url| link_tag(buffer, url).name());
+    let color = span
+        .style
+        .color
+        .and_then(|color| color_tag(buffer, color).name());
+    names.extend(link.as_deref());
+    names.extend(color.as_deref());
+    buffer.insert_with_tags_by_name(at, &span.text, &names);
 }
 
 /// Puts `picture` in at `at`, held by an anchor the reader maps back to
@@ -754,8 +779,19 @@ pub fn insert_image(
     data: &[u8],
     anchors: &mut Anchors,
 ) {
+    insert_picture(view, at, &format!("cid:{cid}"), alt, data, anchors);
+}
+
+pub fn insert_picture(
+    view: &gtk::TextView,
+    at: &mut gtk::TextIter,
+    source: &str,
+    alt: &str,
+    data: &[u8],
+    anchors: &mut Anchors,
+) {
     let picture = new_picture(alt, data);
-    place(view, at, &picture, &format!("cid:{cid}"), alt, anchors);
+    place(view, at, &picture, source, alt, anchors);
 }
 
 /// Puts the picture at `url` at `at`, held by an anchor the reader maps
@@ -1296,8 +1332,9 @@ mod tests {
     fn a_quoted_picture_keeps_its_words() {
         const LOGO: &str = "https://example.invalid/Logo.jpg";
         let (view, buffer, mut anchors) = buffer();
-        let body =
-            RichBody::from_markdown(&format!("> ![Logo]({LOGO})\n> - ![List]({LOGO})\n> # ![Big]({LOGO})"));
+        let body = RichBody::from_markdown(&format!(
+            "> ![Logo]({LOGO})\n> - ![List]({LOGO})\n> # ![Big]({LOGO})"
+        ));
         assert!(
             body.blocks.iter().all(|block| block.is_quote()),
             "the quote holds the list and the heading too: {}",

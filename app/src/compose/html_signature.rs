@@ -38,6 +38,36 @@ pub struct HtmlSignature {
 /// holds no character Markdown or HTML would read as a mark.
 const MARK: &str = "PenguinMailHtmlSignatureGoesHere";
 
+/// Signatures made in Preferences can be opened again in its visual editor.
+/// Imported HTML can have layouts the visual editor cannot represent.
+const VISUAL: &str = "<div data-penguin-mail-signature=\"visual\">";
+
+pub(crate) fn visual_body(template: &str) -> RichBody {
+    if is_html(template) {
+        let html = body_of(template)
+            .replace("<email>", "&lt;email&gt;")
+            .replace("<domain>", "&lt;domain&gt;");
+        RichBody::from_html(&html)
+    } else {
+        RichBody::from_markdown(template)
+    }
+}
+
+pub(crate) fn visual_template(body: &RichBody) -> String {
+    if body.is_empty() {
+        return String::new();
+    }
+    let html = body
+        .to_html()
+        .replace("&lt;email&gt;", "<email>")
+        .replace("&lt;domain&gt;", "<domain>");
+    format!("{VISUAL}{html}</div>")
+}
+
+pub(crate) fn prefers_source(template: &str) -> bool {
+    is_html(template) && !template.trim_start().starts_with(VISUAL)
+}
+
 /// Whether `template` is HTML rather than Markdown: it opens with a tag
 /// and closes one, or it is nothing but tags that have no end tag, such as
 /// a lone `<img>`. A Markdown signature that starts with `<email>` is not.
@@ -156,7 +186,7 @@ pub fn expand(template: &str, email: &str) -> Option<HtmlSignature> {
 /// words its pictures stand for. The composer finds an untouched signature
 /// again by these words, so a signature that is only a logo needs some, or
 /// it would never reach the message.
-fn shown_text(html: &str) -> String {
+pub(crate) fn shown_text(html: &str) -> String {
     let text = text_of(html);
     if !text.trim().is_empty() {
         return text;
@@ -341,15 +371,7 @@ fn with_source(tag: &str, source: &str) -> String {
 fn picture(source: &str, number: usize) -> Option<OutgoingAttachment> {
     let (data, mime_type, filename) = match source.get(..5) {
         Some(scheme) if scheme.eq_ignore_ascii_case("data:") => {
-            let (header, payload) = source[5..].split_once(',')?;
-            let (mime_type, encoding) = header.split_once(';')?;
-            if !encoding.eq_ignore_ascii_case("base64") || !mime_type.starts_with("image/") {
-                return None;
-            }
-            let payload: String = payload.chars().filter(|c| !c.is_whitespace()).collect();
-            let data = base64::engine::general_purpose::STANDARD
-                .decode(payload)
-                .ok()?;
+            let (mime_type, data) = data_picture(source)?;
             let extension = mime_type
                 .trim_start_matches("image/")
                 .replace("svg+xml", "svg");
@@ -385,6 +407,24 @@ fn picture(source: &str, number: usize) -> Option<OutgoingAttachment> {
             rand::random::<u64>()
         )),
     })
+}
+
+/// Bytes of a picture carried in the template itself, also used to draw it
+/// in the visual editor.
+pub(crate) fn data_picture(source: &str) -> Option<(&str, Vec<u8>)> {
+    if !source.get(..5)?.eq_ignore_ascii_case("data:") {
+        return None;
+    }
+    let (header, payload) = source[5..].split_once(',')?;
+    let (mime_type, encoding) = header.split_once(';')?;
+    if !encoding.eq_ignore_ascii_case("base64") || !mime_type.starts_with("image/") {
+        return None;
+    }
+    let payload: String = payload.chars().filter(|c| !c.is_whitespace()).collect();
+    let data = base64::engine::general_purpose::STANDARD
+        .decode(payload)
+        .ok()?;
+    Some((mime_type, data))
 }
 
 #[cfg(test)]
@@ -647,6 +687,47 @@ mod tests {
             assert!(mime.contains("Hello Ann"), "{mime}");
             // The text part keeps the words.
             assert!(mime.contains("David Friedrich"), "{mime}");
+        }
+    }
+
+    #[test]
+    fn a_visual_signature_keeps_styles_tokens_and_its_picture() {
+        let body = visual_body(
+            "<div><span style=\"color:#248\"><strong><em>&lt;email&gt;</em></strong></span>\
+             <br><img src=\"data:image/png;base64,bG9nbw==\" alt=\"Logo\"></div>",
+        );
+        let template = visual_template(&body);
+        assert!(!prefers_source(&template));
+        assert!(prefers_source(CARD));
+        assert_eq!(visual_body(&template), body);
+
+        for rich in [false, true] {
+            let draft = draft_from(&template, "Hello", rich);
+            let preview = super::super::html_to_preview(
+                &draft.markdown,
+                draft.rich.as_ref(),
+                None,
+                draft.html_signature.as_ref(),
+            );
+            assert!(preview.contains("color:#224488"), "{preview}");
+            assert!(preview.contains("dana@example.com"), "{preview}");
+            assert!(
+                preview.contains("data:image/png;base64,bG9nbw=="),
+                "{preview}"
+            );
+            let mime = sent(&draft);
+            let parsed = mail_parser::MessageParser::default()
+                .parse(mime.as_bytes())
+                .unwrap();
+            let html = parsed.body_html(0).unwrap();
+            assert!(html.contains("color:#224488"), "{html}");
+            assert!(
+                html.contains("<em><strong>dana@example.com</strong></em>"),
+                "{html}"
+            );
+            let picture = parsed.attachments().next().unwrap();
+            assert_eq!(picture.decoded().as_ref(), b"logo");
+            assert!(picture.content_id().unwrap().starts_with("signature1."));
         }
     }
 

@@ -593,6 +593,19 @@ impl Editor {
         self.busy.set(false);
     }
 
+    /// Colors selected text, or the next text typed at the cursor.
+    pub fn color(&self, color: Option<[u8; 3]>) {
+        let buffer = &self.buffer;
+        if let Some((start, end)) = buffer.selection_bounds() {
+            richbuffer::color_range(buffer, &start, &end, color);
+        } else {
+            let cursor = buffer.iter_at_mark(&buffer.get_insert());
+            let (mut style, link) = self.next_style(&cursor);
+            style.color = color;
+            self.typing.replace(Some((cursor.offset(), style, link)));
+        }
+    }
+
     /// The kind of the line the cursor is on, for the paragraph styles the
     /// formatting menu marks.
     pub fn block_here(&self) -> BlockKind {
@@ -1106,17 +1119,21 @@ impl Editor {
     /// the body is Markdown. `cid` is what the message calls it, and `alt`
     /// the words that describe it.
     pub fn insert_image(&self, cid: &str, alt: &str, data: &[u8]) {
+        self.insert_picture(&format!("cid:{cid}"), alt, data);
+    }
+
+    pub fn insert_picture(&self, source: &str, alt: &str, data: &[u8]) {
         match self.format.get() {
             ComposeFormat::Rich if self.buffer.enables_undo() => {
-                self.place_picture(cid, alt, data);
+                self.place_picture(source, alt, data);
             }
             ComposeFormat::Rich => {
                 let mut at = self.buffer.iter_at_mark(&self.buffer.get_insert());
                 self.busy.set(true);
-                richbuffer::insert_image(
+                richbuffer::insert_picture(
                     &self.view,
                     &mut at,
-                    cid,
+                    source,
                     alt,
                     data,
                     &mut self.anchors.borrow_mut(),
@@ -1127,8 +1144,7 @@ impl Editor {
                 // A bracket would end the Markdown picture's words early.
                 let alt: String = alt.chars().filter(|c| !matches!(c, '[' | ']')).collect();
                 self.busy.set(true);
-                self.buffer
-                    .insert_at_cursor(&format!("![{alt}](cid:{cid})"));
+                self.buffer.insert_at_cursor(&format!("![{alt}]({source})"));
                 self.busy.set(false);
             }
         }
@@ -1143,7 +1159,7 @@ impl Editor {
     /// Redo, like any Redo, swaps the character for the picture's anchor
     /// in [`Editor::swap_pictures`]. The history is back where it was, ending
     /// with the picture's own step, and nothing is left to redo.
-    fn place_picture(&self, cid: &str, alt: &str, data: &[u8]) {
+    fn place_picture(&self, source: &str, alt: &str, data: &[u8]) {
         let buffer = &self.buffer;
         let at = buffer.iter_at_mark(&buffer.get_insert());
         let offset = at.offset();
@@ -1152,7 +1168,7 @@ impl Editor {
             offset,
             KeptPicture {
                 widget: picture.upcast(),
-                src: format!("cid:{cid}"),
+                src: source.to_string(),
                 alt: alt.to_string(),
             },
         )));
@@ -1446,6 +1462,9 @@ impl Editor {
                 } else {
                     buffer.remove_tag_by_name(tag, &from, &to);
                 }
+            }
+            if style.color.is_some() || richbuffer::style_at(&from).0.color.is_some() {
+                richbuffer::color_range(buffer, &from, &to, style.color);
             }
             if let Some(url) = &link {
                 buffer.apply_tag(&richbuffer::link_tag(buffer, url), &from, &to);

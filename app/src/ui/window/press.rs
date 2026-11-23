@@ -84,6 +84,8 @@ pub(super) enum Press {
 pub(super) enum Scope {
     /// What the view shows: the open conversation or the selected rows.
     Shown,
+    /// A row's own button. Move on only if that row is still selected.
+    Row,
     /// Rows that need not be the ones on screen, as a drag carries.
     Carried {
         /// The open conversation is among them.
@@ -231,7 +233,7 @@ pub(super) fn plan(pressed: Pressed) -> Plan {
     let mailbox = &reach.mailbox;
     let act = |action: MailAction, history: History, words: Option<String>| {
         let move_on = match scope {
-            Scope::Shown => true,
+            Scope::Shown | Scope::Row => true,
             Scope::Carried { open } => open,
             Scope::Message { alone } => alone,
         } && aftermath::leaves(&action, mailbox);

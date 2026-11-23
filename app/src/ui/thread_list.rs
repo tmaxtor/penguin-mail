@@ -12,7 +12,7 @@ use std::rc::Rc;
 
 use adw::prelude::*;
 use gtk::{gdk, gio, glib, graphene};
-use mailrs_domain::{AccountId, ThreadSummary};
+use mailrs_domain::{AccountId, Target, ThreadSummary};
 
 use super::list_feed::order;
 use super::sidebar::DRAG_MAIL;
@@ -41,6 +41,12 @@ pub type Row = Rc<ThreadSummary>;
 
 fn key(row: &ThreadSummary) -> Key {
     (row.account_id, row.id.clone(), row.message_id.clone())
+}
+
+fn is_target(row: &ThreadSummary, target: &Target) -> bool {
+    row.account_id == target.account_id
+        && row.id == target.thread_id
+        && row.message_id == target.message_id
 }
 
 pub struct ThreadList {
@@ -81,6 +87,7 @@ pub struct ThreadList {
     /// The rows of the drag in progress.
     dragged: Rc<RefCell<Vec<Row>>>,
     show_accounts: Rc<Cell<bool>>,
+    trash_available: Rc<Cell<bool>>,
     appearance: Rc<Cell<(crate::settings::PreviewLines, bool, bool, bool)>>,
     /// Lower-case VIP addresses; their rows get a star.
     vips: Rc<RefCell<HashSet<String>>>,
@@ -102,10 +109,12 @@ impl ThreadList {
     pub fn new(
         on_select: impl Fn(Picked) + 'static,
         on_search: impl Fn(String) + 'static,
+        on_trash: impl Fn(Row) + 'static,
     ) -> Rc<ThreadList> {
         let store = gio::ListStore::new::<glib::BoxedAnyObject>();
         let selection = gtk::MultiSelection::new(Some(store.clone()));
         let show_accounts = Rc::new(Cell::new(true));
+        let trash_available = Rc::new(Cell::new(true));
         let rows: Rc<RefCell<Vec<Row>>> = Rc::new(RefCell::new(Vec::new()));
         let row_popover = gtk::PopoverMenu::from_model(None::<&gio::MenuModel>);
         super::name_menu_items(&row_popover);
@@ -117,6 +126,7 @@ impl ThreadList {
         let making = Rc::clone(&made);
         let (all, drag_rows, picked) = (Rc::clone(&rows), Rc::clone(&dragged), selection.clone());
         let menu = row_popover.clone();
+        let on_trash = Rc::new(on_trash);
         factory.connect_setup(move |_, item| {
             let item = item
                 .downcast_ref::<gtk::ListItem>()
@@ -125,6 +135,18 @@ impl ThreadList {
             row.set_item(item);
             making.borrow_mut().push(row.downgrade());
             context_menu(&row, item, &picked, &menu);
+            let on_trash = Rc::clone(&on_trash);
+            let bound = item.downgrade();
+            row.connect_trash(move || {
+                if let Some(object) = bound
+                    .upgrade()
+                    .and_then(|item| item.item())
+                    .and_downcast::<glib::BoxedAnyObject>()
+                {
+                    let target = Rc::clone(&object.borrow::<Row>());
+                    on_trash(target);
+                }
+            });
             // Dragging a selected row takes the whole selection along.
             let source = gtk::DragSource::new();
             source.set_actions(gdk::DragAction::MOVE);
@@ -176,6 +198,7 @@ impl ThreadList {
         )));
         let row_appearance = Rc::clone(&appearance);
         let shown = Rc::clone(&show_accounts);
+        let can_trash = Rc::clone(&trash_available);
         let vips: Rc<RefCell<HashSet<String>>> = Rc::new(RefCell::new(HashSet::new()));
         let starred_people = Rc::clone(&vips);
         let photos: Rc<RefCell<Option<Rc<ContactPhotos>>>> = Rc::default();
@@ -205,6 +228,7 @@ impl ThreadList {
             };
             row.bind(&thread, shown.get(), vip, avatar);
             row.set_appearance(&thread, lines, bold, bold_senders);
+            row.set_trash_available(can_trash.get());
         });
         let binds = Rc::clone(&bind);
         factory.connect_bind(move |_, item| {
@@ -212,6 +236,15 @@ impl ThreadList {
                 .downcast_ref::<gtk::ListItem>()
                 .expect("list items are ListItems");
             binds(item);
+        });
+        factory.connect_unbind(|_, item| {
+            if let Some(row) = item
+                .downcast_ref::<gtk::ListItem>()
+                .and_then(|item| item.child())
+                .and_downcast::<ThreadRow>()
+            {
+                row.set_trash_available(false);
+            }
         });
         let view = gtk::ListView::builder()
             .model(&selection)
@@ -402,6 +435,7 @@ impl ThreadList {
             rows,
             dragged,
             show_accounts,
+            trash_available,
             appearance,
             vips,
             photos,
@@ -447,6 +481,12 @@ impl ThreadList {
 
     pub fn set_pull_to_refresh(&self, enabled: bool) {
         self.pull.set_enabled(enabled);
+    }
+
+    pub fn set_trash_available(&self, available: bool) {
+        if self.trash_available.replace(available) != available {
+            self.rebind();
+        }
     }
 
     pub fn set_title(&self, title: &str, subtitle: &str) {
@@ -830,6 +870,19 @@ impl ThreadList {
         self.selection.selection().size() as usize
     }
 
+    pub fn has_row(&self, target: &Target) -> bool {
+        self.rows.borrow().iter().any(|row| is_target(row, target))
+    }
+
+    pub fn only_selected(&self, target: &Target) -> bool {
+        self.single_position().is_some_and(|position| {
+            self.rows
+                .borrow()
+                .get(position)
+                .is_some_and(|row| is_target(row, target))
+        })
+    }
+
     pub fn picked(&self) -> Picked {
         let mut picked = self.selected_rows();
         match picked.len() {
@@ -1143,7 +1196,7 @@ pub(crate) mod checks {
         super::pull::checks::run();
         crate::ui::thread_row::check_appearance();
         filters::check();
-        let list = ThreadList::new(|_| {}, |_| {});
+        let list = ThreadList::new(|_| {}, |_| {}, |_| {});
         let calls = Rc::new(Cell::new(0));
         let clicked = Rc::clone(&calls);
         list.connect_more(move || clicked.set(clicked.get() + 1));
@@ -1301,6 +1354,20 @@ mod tests {
             id: id.into(),
             ..ThreadSummary::default()
         })
+    }
+
+    #[test]
+    fn a_row_target_distinguishes_messages_in_the_same_thread() {
+        let mut first = (*row("thread")).clone();
+        first.message_id = Some("first".into());
+        let second = ThreadSummary {
+            message_id: Some("second".into()),
+            ..first.clone()
+        };
+        let target = Target::from_row(&first);
+        assert!(is_target(&first, &target));
+        assert!(!is_target(&second, &target));
+        assert!(!is_target(&row("thread"), &target));
     }
 
     #[test]

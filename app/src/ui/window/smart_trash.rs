@@ -17,7 +17,10 @@ impl Screen<Vec<Target>> for Pressing {
             .unwrap_or_else(|| self.window.window.clone().upcast());
         parent.is_visible()
             && self.window.mailbox_of(&self.view) == self.mailbox
-            && self.window.reach(&self.view).targets == *targets
+            && match &self.row {
+                Some(row) => self.window.list.has_row(row),
+                None => self.window.reach(&self.view).targets == *targets,
+            }
     }
 }
 
@@ -33,7 +36,12 @@ impl Pressing {
         if targets.iter().all(|t| t.message_id.is_some()) {
             return Some(from);
         }
-        let wanted = Wanted::new(self, self, self.window.reach(&self.view).targets);
+        let watched = if self.row.is_some() {
+            targets.clone()
+        } else {
+            self.window.reach(&self.view).targets
+        };
+        let wanted = Wanted::new(self, self, watched);
         if !wanted.is_wanted() {
             return None;
         }

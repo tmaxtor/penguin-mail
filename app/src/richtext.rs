@@ -34,6 +34,30 @@ pub struct Style {
     pub italic: bool,
     pub strike: bool,
     pub code: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color: Option<[u8; 3]>,
+}
+
+pub(crate) fn hex_color([red, green, blue]: [u8; 3]) -> String {
+    format!("#{red:02x}{green:02x}{blue:02x}")
+}
+
+pub(crate) fn read_color(value: &str) -> Option<[u8; 3]> {
+    let hex = value.strip_prefix('#')?;
+    if !hex.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+        return None;
+    }
+    match hex.len() {
+        3 => {
+            let digit = |at| u8::from_str_radix(&hex[at..at + 1], 16).unwrap() * 17;
+            Some([digit(0), digit(1), digit(2)])
+        }
+        6 => {
+            let pair = |at| u8::from_str_radix(&hex[at..at + 2], 16).unwrap();
+            Some([pair(0), pair(2), pair(4)])
+        }
+        _ => None,
+    }
 }
 
 /// A run of text that shares one style, one link, or one image.
@@ -379,6 +403,9 @@ fn spans_to_html(spans: &[Span]) -> String {
         if let Some(url) = &span.link {
             text = format!("<a href=\"{}\">{text}</a>", escape(url));
         }
+        if let Some(color) = span.style.color {
+            text = format!("<span style=\"color:{}\">{text}</span>", hex_color(color));
+        }
         out.push_str(&text);
     }
     out
@@ -708,6 +735,7 @@ struct HtmlBuilder {
     strike: usize,
     code: usize,
     links: Vec<String>,
+    colors: Vec<Option<[u8; 3]>>,
     /// The lists, quotes and code blocks we are inside, innermost last.
     open: Vec<BlockKind>,
     heading: Option<u8>,
@@ -731,6 +759,7 @@ impl HtmlBuilder {
             italic: self.italic > 0,
             strike: self.strike > 0,
             code: self.code > 0 && self.pre == 0,
+            color: self.colors.iter().rev().find_map(|color| *color),
         }
     }
 
@@ -864,6 +893,21 @@ impl HtmlBuilder {
             "i" | "em" => self.italic = step(self.italic, closing),
             "s" | "del" | "strike" => self.strike = step(self.strike, closing),
             "code" | "tt" | "kbd" | "samp" => self.code = step(self.code, closing),
+            "span" => {
+                if closing {
+                    self.colors.pop();
+                } else {
+                    let color = tag
+                        .attribute("style")
+                        .into_iter()
+                        .flat_map(|style| style.split(';'))
+                        .filter_map(|rule| rule.split_once(':'))
+                        .filter(|(name, _)| name.trim().eq_ignore_ascii_case("color"))
+                        .filter_map(|(_, value)| read_color(value.trim()))
+                        .next_back();
+                    self.colors.push(color);
+                }
+            }
             "a" => match closing {
                 true => {
                     self.links.pop();

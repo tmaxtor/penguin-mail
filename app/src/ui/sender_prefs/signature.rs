@@ -34,33 +34,19 @@ pub(super) fn show(app: &Rc<App>, parent: &impl IsA<gtk::Widget>, account: &str,
         .selected(selected)
         .build();
     group.add(&choice);
-    let text = gtk::TextView::builder()
-        .wrap_mode(gtk::WrapMode::WordChar)
-        .top_margin(10)
-        .bottom_margin(10)
-        .left_margin(12)
-        .right_margin(12)
-        .accepts_tab(false)
-        .build();
-    text.buffer()
-        .set_text(settings.signature_text(account, email));
-    crate::ui::name(&text, &title);
     let help = gettext(
-        "Markdown or HTML works. <email> becomes the sending address, including its suffix; <domain> becomes its domain.",
+        "Use Edit Source to write Markdown or HTML. <email> becomes the sending address, including its suffix. <domain> becomes its domain.",
     );
-    crate::ui::describe(&text, &title, &help);
-    let scroll = gtk::ScrolledWindow::builder()
-        .child(&text)
-        .min_content_height(120)
-        .max_content_height(220)
-        .propagate_natural_height(true)
-        .hscrollbar_policy(gtk::PolicyType::Never)
-        .build();
-    scroll.set_visible(selected == 1);
-    let weak_scroll = scroll.downgrade();
+    let editor = crate::ui::signature_editor::SignatureEditor::new(
+        settings.signature_text(account, email),
+        &title,
+        &help,
+    );
+    editor.widget.set_visible(selected == 1);
+    let weak_editor = editor.widget.downgrade();
     choice.connect_selected_notify(move |choice| {
-        if let Some(scroll) = weak_scroll.upgrade() {
-            scroll.set_visible(choice.selected() == 1);
+        if let Some(editor) = weak_editor.upgrade() {
+            editor.set_visible(choice.selected() == 1);
         }
     });
     let content = gtk::Box::new(gtk::Orientation::Vertical, 12);
@@ -73,7 +59,7 @@ pub(super) fn show(app: &Rc<App>, parent: &impl IsA<gtk::Widget>, account: &str,
             .max_width_chars(48)
             .build(),
     );
-    content.append(&scroll);
+    content.append(&editor.widget);
     dialog.set_extra_child(Some(&content));
     dialog.add_responses(&[("cancel", &gettext("Cancel")), ("save", &gettext("Save"))]);
     dialog.set_response_appearance("save", adw::ResponseAppearance::Suggested);
@@ -82,13 +68,10 @@ pub(super) fn show(app: &Rc<App>, parent: &impl IsA<gtk::Widget>, account: &str,
     let (app, email) = (Rc::downgrade(app), email.to_string());
     dialog.connect_response(Some("save"), move |_, _| {
         let Some(app) = app.upgrade() else { return };
-        let buffer = text.buffer();
         app.change_settings(Change::SenderSignature {
             email: email.clone(),
             mode: modes[choice.selected() as usize],
-            text: buffer
-                .text(&buffer.start_iter(), &buffer.end_iter(), false)
-                .to_string(),
+            text: editor.text(),
         });
     });
     dialog.present(Some(parent));

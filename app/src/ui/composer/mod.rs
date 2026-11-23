@@ -9,9 +9,9 @@
 
 mod body_view;
 mod clipboard;
-mod editor;
+pub(super) mod editor;
 mod files;
-mod pictures;
+pub(super) mod pictures;
 mod recipients;
 mod removals;
 mod richbuffer;
@@ -36,7 +36,7 @@ use super::{labelled_by, name, name_with_shortcut, roving};
 use crate::attachcheck::Promise;
 use crate::compose::{
     Asking, Built, Draft, Forwarded, Gate, OutgoingAttachment, SendWhen, build, format_recipients,
-    gate, html_to_send, is_address, kept_mask, masked_site, new_message_id, off_thread,
+    gate, html_to_preview, is_address, kept_mask, masked_site, new_message_id, off_thread,
     opening_identity,
 };
 use crate::core::Core;
@@ -1211,12 +1211,19 @@ impl Composer {
     /// under it, as it goes out.
     fn html(&self) -> String {
         let quoted = self.base.borrow().quoted.clone();
-        let mut html = match quoted {
-            Some(quoted) => {
-                let written = self.editor.written();
-                html_to_send(&written.markdown, written.rich.as_ref(), Some(&quoted))
-            }
-            None => self.editor.html(),
+        let signature = self.identity().and_then(|identity| {
+            crate::compose::expand_html_signature(&identity.signature, &identity.address.email)
+        });
+        let mut html = if quoted.is_some() || signature.is_some() {
+            let written = self.editor.written();
+            html_to_preview(
+                &written.markdown,
+                written.rich.as_ref(),
+                quoted.as_deref(),
+                signature.as_ref(),
+            )
+        } else {
+            self.editor.html()
         };
         if let Some(forwarded) = &self.base.borrow().forwarded {
             html.push_str(&forwarded.to_html());

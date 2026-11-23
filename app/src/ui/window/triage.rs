@@ -106,6 +106,11 @@ pub(super) fn deletes(mailbox: &Mailbox, erases: bool) -> bool {
     decide(&Action::Trash, mailbox, Marks::default(), erases).is_some()
 }
 
+pub(super) fn moves_to_trash(mailbox: &Mailbox) -> bool {
+    decide(&Action::Trash, mailbox, Marks::default(), false)
+        == Some(Decision::Triage(TriageAction::Trash))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -128,6 +133,8 @@ mod tests {
 
     #[test]
     fn delete_moves_mail_to_the_trash_and_erases_it_once_it_is_there() {
+        assert!(moves_to_trash(&inbox()));
+        assert!(!moves_to_trash(&folder(Folder::Trash)));
         assert_eq!(
             decide_in(Action::Trash, inbox()),
             Some(Decision::Triage(TriageAction::Trash))
@@ -151,6 +158,7 @@ mod tests {
             (Mailbox::FollowUp, Cancel::FollowUp),
         ];
         for (mailbox, cancel) in cancels {
+            assert!(!moves_to_trash(&mailbox));
             assert_eq!(
                 decide_in(Action::Trash, mailbox),
                 Some(Decision::Cancel(cancel))

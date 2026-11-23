@@ -104,6 +104,7 @@ row.account-heading { transition: background-color 120ms ease, color 120ms ease;
 .app-dark .thread-list > row:selected { background-color: alpha(var(--accent-bg-color), 0.26); }
 .app-dark .thread-list > row:selected:hover { background-color: alpha(var(--accent-bg-color), 0.31); }
 .thread-row { padding: 0 12px 0 6px; }
+.thread-row .row-trash { min-width: 30px; min-height: 30px; padding: 0; }
 /* Dot 8 px, centred 22 px from the list's start and 20 px below the
    row's top; avatar 34 px centred 52 px in; text from 80 px. */
 .thread-row .unread-dot {

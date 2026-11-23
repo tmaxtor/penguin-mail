@@ -642,35 +642,18 @@ fn signature_row(
             .expanded(expanded)
             .build(),
     );
-    let view = gtk::TextView::builder()
-        .wrap_mode(gtk::WrapMode::WordChar)
-        .top_margin(10)
-        .bottom_margin(10)
-        .left_margin(12)
-        .right_margin(12)
-        .accepts_tab(false)
-        .build();
     let help = gettext(
-        "Used by this account and addresses without their own signature. Markdown or HTML works. <email> becomes the sending address, including its suffix; <domain> becomes its domain.",
+        "Used by this account and addresses without their own signature. Use Edit Source to write Markdown or HTML. <email> becomes the sending address, including its suffix. <domain> becomes its domain.",
     );
     dialog::explain(&row, &help);
-    dialog::explain(&view, &help);
-    view.buffer().set_text(&text);
-    super::name(
-        &view,
-        &fill(
-            &gettext("Signature for {account}"),
-            &[("account", &account.email)],
-        ),
+    let title = fill(
+        &gettext("Signature for {account}"),
+        &[("account", &account.email)],
     );
-    let frame = gtk::ScrolledWindow::builder()
-        .child(&view)
-        .min_content_height(96)
-        .max_content_height(220)
-        .propagate_natural_height(true)
-        .hscrollbar_policy(gtk::PolicyType::Never)
-        .build();
-    row.add_row(&frame);
+    let editor = Rc::new(super::signature_editor::SignatureEditor::new(
+        &text, &title, &help,
+    ));
+    row.add_row(&editor.widget);
     if account.provider == mailrs_domain::Provider::Gmail {
         let import = gtk::Button::builder()
             .label(gettext("Import from Gmail"))
@@ -684,7 +667,7 @@ fn signature_row(
         let (weak, account_id, target, toasts) = (
             Rc::downgrade(app),
             account.id,
-            view.buffer(),
+            Rc::clone(&editor),
             dialog.downgrade(),
         );
         import.connect_clicked(move |button| {
@@ -707,6 +690,9 @@ fn signature_row(
                     .await
                 {
                     Ok(Some(signature)) => {
+                        if target.widget.root().is_none() {
+                            return;
+                        }
                         target.set_text(&signature);
                         toasts.add_toast(crate::ui::toast(&gettext(
                             "Imported the signature from Gmail",
@@ -726,11 +712,8 @@ fn signature_row(
     }
     let (weak, email, subtitle) = (Rc::downgrade(app), account.email.clone(), row.downgrade());
     let account_row = account_row.downgrade();
-    view.buffer().connect_changed(move |buffer| {
+    editor.connect_changed(move |text| {
         let Some(app) = weak.upgrade() else { return };
-        let text = buffer
-            .text(&buffer.start_iter(), &buffer.end_iter(), false)
-            .to_string();
         if let Some(subtitle) = subtitle.upgrade() {
             subtitle.set_subtitle(&preview(&text));
         }
@@ -1827,7 +1810,7 @@ fn sync_combo<T: Copy + 'static>(
 fn preview(signature: &str) -> String {
     // An HTML signature shows its first line of text, not its first tag.
     let text = match crate::compose::is_html_signature(signature) {
-        true => crate::compose::html_to_text(signature),
+        true => crate::compose::html_signature::shown_text(signature),
         false => signature.to_string(),
     };
     text.lines()

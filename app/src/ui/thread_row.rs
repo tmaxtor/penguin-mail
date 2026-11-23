@@ -44,6 +44,8 @@ mod imp {
         /// The calendar mark beside the subject, on while an open message
         /// of the thread carried a live invitation.
         pub invite: OnceCell<gtk::Image>,
+        pub trash: OnceCell<gtk::Button>,
+        pub trash_slot: OnceCell<gtk::Box>,
         /// Opens the row's menu: at a point for a click, over the whole
         /// row for a key.
         pub menu: RefCell<Option<super::OpenMenu>>,
@@ -191,6 +193,36 @@ mod imp {
             row.append(&avatar);
             row.append(&content);
 
+            let trash_slot = gtk::Box::builder()
+                .orientation(gtk::Orientation::Vertical)
+                .width_request(36)
+                .margin_start(4)
+                .visible(false)
+                .build();
+            let trash_name = gettext("Move to Trash");
+            let trash = gtk::Button::builder()
+                .icon_name("user-trash-symbolic")
+                .tooltip_text(&trash_name)
+                .halign(gtk::Align::End)
+                .valign(gtk::Align::Center)
+                .vexpand(true)
+                .focusable(false)
+                .focus_on_click(false)
+                .visible(false)
+                .css_classes(["flat", "circular", "row-trash"])
+                .build();
+            crate::ui::name(&trash, &trash_name);
+            let motion = gtk::EventControllerMotion::new();
+            let weak = trash.downgrade();
+            motion.connect_contains_pointer_notify(move |motion| {
+                if let Some(trash) = weak.upgrade() {
+                    trash.set_visible(motion.contains_pointer());
+                }
+            });
+            trash_slot.add_controller(motion);
+            trash_slot.append(&trash);
+            row.append(&trash_slot);
+
             let _ = self.avatar.set(avatar);
             let _ = self.account.set(account);
             let _ = self.vip.set(vip);
@@ -206,6 +238,8 @@ mod imp {
             let _ = self.snippet.set(snippet);
             let _ = self.held.set(held);
             let _ = self.note.set(note);
+            let _ = self.trash.set(trash);
+            let _ = self.trash_slot.set(trash_slot);
         }
     }
 
@@ -362,6 +396,21 @@ impl ThreadRow {
     /// The list item that holds the row.
     pub fn item(&self) -> Option<gtk::ListItem> {
         self.imp().item.upgrade()
+    }
+
+    pub fn set_trash_available(&self, available: bool) {
+        self.imp().trash_slot.get().unwrap().set_visible(available);
+        if !available {
+            self.imp().trash.get().unwrap().set_visible(false);
+        }
+    }
+
+    pub fn connect_trash(&self, trash: impl Fn() + 'static) {
+        self.imp()
+            .trash
+            .get()
+            .unwrap()
+            .connect_clicked(move |_| trash());
     }
 
     /// The position in the list the row shows, or `None` while it shows

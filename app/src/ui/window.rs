@@ -557,7 +557,7 @@ impl MainWindow {
                     }
                 },
             );
-            let (w, s) = (weak.clone(), weak.clone());
+            let (w, s, t) = (weak.clone(), weak.clone(), weak.clone());
             let list = ThreadList::new(
                 move |picked| {
                     if let Some(win) = w.upgrade() {
@@ -567,6 +567,11 @@ impl MainWindow {
                 move |query| {
                     if let Some(win) = s.upgrade() {
                         win.search_entered(query);
+                    }
+                },
+                move |row| {
+                    if let Some(win) = t.upgrade() {
+                        win.trash_row(row);
                     }
                 },
             );
@@ -1803,6 +1808,8 @@ impl MainWindow {
         if redraw.follow {
             let mailbox = self.shown();
             self.list
+                .set_trash_available(triage::moves_to_trash(&mailbox));
+            self.list
                 .set_show_accounts(mailbox.account().is_none() && self.mail_accounts().len() > 1);
             let accounts = self.accounts_of(&mailbox);
             self.word_buttons(&self.conversation, &mailbox, accounts);
@@ -2017,6 +2024,19 @@ impl MainWindow {
         self.press_on(view, reach, press::Scope::Shown, press);
     }
 
+    fn trash_row(self: &Rc<Self>, row: super::thread_list::Row) {
+        let mailbox = self.shown();
+        if triage::moves_to_trash(&mailbox) {
+            let reach = Reach::new(&[row], None, mailbox);
+            self.press_on(
+                &self.conversation,
+                reach,
+                press::Scope::Row,
+                Press::Button(press::Button::Trash),
+            );
+        }
+    }
+
     /// Carries out what `press` comes to on `reach`, made in `view`, and
     /// says whether it does anything. Everything but a question before
     /// erasing happens before this returns, so the next row is open by
@@ -2029,6 +2049,11 @@ impl MainWindow {
         press: Press,
     ) -> bool {
         let mailbox = reach.mailbox.clone();
+        let row = if scope == press::Scope::Row {
+            reach.targets.first().cloned()
+        } else {
+            None
+        };
         let accounts = press::reached(&reach.targets, |id| self.account(id), |id| self.offers(id));
         let plan = press::plan(Pressed {
             press,
@@ -2041,6 +2066,7 @@ impl MainWindow {
         let taken = plan.taken();
         let pressing = Pressing {
             mailbox,
+            row,
             window: Rc::clone(self),
             view: Rc::clone(view),
         };
@@ -4617,6 +4643,7 @@ impl MainWindow {
 /// The main window and one conversation view, as a press changes them.
 struct Pressing {
     mailbox: Mailbox,
+    row: Option<Target>,
     window: Rc<MainWindow>,
     view: Rc<ConversationView>,
 }
@@ -4631,7 +4658,13 @@ impl PressEffects for Pressing {
     }
 
     fn move_on(&self) {
-        self.window.move_on(&self.view);
+        if self
+            .row
+            .as_ref()
+            .is_none_or(|row| self.window.list.only_selected(row))
+        {
+            self.window.move_on(&self.view);
+        }
     }
 
     fn confirm(&self, question: Question) -> crate::wanted::Answer<'_, bool> {

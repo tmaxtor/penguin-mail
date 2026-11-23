@@ -134,8 +134,10 @@ browser, Microsoft".
 
 Each additional address under Addresses You Send From has a Signature button.
 Its dialog offers the account signature, a custom signature, or no signature.
-The custom text field is named for the address and describes the Markdown and
-sender placeholders. Save applies the choice; Cancel leaves it unchanged.
+The editor is named for the address. Its formatting bar offers Bold, Italic,
+Text Color, Reset Text Color, and Insert Image. Edit Source opens the Markdown
+or HTML template and the sender placeholders work in both views. Save applies
+the custom sender's choice. The account editor saves as you edit.
 
 ## The composer from the keyboard
 
@@ -186,6 +188,11 @@ else (`thread_list/entry.rs`). Each list item carries the row's spoken
 name, so a screen reader reads the row the focus reaches. GTK draws
 libadwaita's focus ring on a row the arrows reach in a list view, so
 this list needs none of the sidebar's `keyed` class.
+
+The icon at the right edge of a mail row moves that row to Trash when
+clicked. From the keyboard, select the mail and press Delete, or open the
+row menu with Menu or Shift+F10.
+
 ## Menus
 
 In Favorites, focus an entry and press Menu or Shift+F10 to open its menu.

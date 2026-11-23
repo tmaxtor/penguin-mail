@@ -8,7 +8,7 @@
 //! text: it then decides both parts, HTML from the styled blocks and plain
 //! text stripped from the same blocks.
 
-mod html_signature;
+pub(crate) mod html_signature;
 mod senders;
 
 pub use html_signature::{
@@ -1698,10 +1698,13 @@ fn written(draft: &Draft, purpose: Purpose) -> (String, String, Vec<OutgoingAtta
     let mut pictures = Vec::new();
     if purpose == Purpose::Send
         && let Some(signature) = &draft.html_signature
-        && let Some((markdown, rich)) =
-            html_signature::marked(&draft.markdown, draft.rich.as_ref(), &signature.shown)
+        && let Some(marked) = marked_html(
+            &draft.markdown,
+            draft.rich.as_ref(),
+            draft.quoted.as_deref(),
+            signature,
+        )
     {
-        let (_, marked) = written_body(&markdown, rich.as_ref(), draft.quoted.as_deref(), purpose);
         let (signature, found) = html_signature::with_inline_pictures(&signature.html);
         html = html_signature::put(&marked, &signature);
         pictures = found;
@@ -1713,10 +1716,30 @@ fn written(draft: &Draft, purpose: Purpose) -> (String, String, Vec<OutgoingAtta
     (text, html, pictures)
 }
 
-/// The HTML a message goes out with for these words and this folded
-/// quote, without anything forwarded. The composer's preview shows it.
-pub fn html_to_send(markdown: &str, rich: Option<&RichBody>, quoted: Option<&str>) -> String {
+/// The composer's preview, with the folded quote and the untouched
+/// signature as they will appear in the message.
+pub fn html_to_preview(
+    markdown: &str,
+    rich: Option<&RichBody>,
+    quoted: Option<&str>,
+    signature: Option<&HtmlSignature>,
+) -> String {
+    if let Some(signature) = signature
+        && let Some(marked) = marked_html(markdown, rich, quoted, signature)
+    {
+        return html_signature::put(&marked, &signature.html);
+    }
     written_body(markdown, rich, quoted, Purpose::Send).1
+}
+
+fn marked_html(
+    markdown: &str,
+    rich: Option<&RichBody>,
+    quoted: Option<&str>,
+    signature: &HtmlSignature,
+) -> Option<String> {
+    let (markdown, rich) = html_signature::marked(markdown, rich, &signature.shown)?;
+    Some(written_body(&markdown, rich.as_ref(), quoted, Purpose::Send).1)
 }
 
 /// [`written`] without the forwarded message.

@@ -48,6 +48,7 @@ pub mod sandbox_setup;
 pub mod search_suggest;
 pub mod sender_prefs;
 pub mod sidebar;
+mod signature_editor;
 pub mod smart_editor;
 pub mod switch_jmap;
 pub mod templates;

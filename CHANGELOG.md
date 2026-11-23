@@ -18,7 +18,11 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ### New
 
+- Move a row to Trash from the icon at its right edge when you hover there.
+
 - Remove Favorites from their menu and reorder them from the menu or by dragging them.
+
+- Format account and sender signatures with bold, italics, text color, and inserted images.
 
 - Add account folders to Favorites from their menu or by dragging them there, and see the account below each folder's name.
 
