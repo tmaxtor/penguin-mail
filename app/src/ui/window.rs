@@ -4471,8 +4471,7 @@ impl MainWindow {
                 self.list.photos_changed();
                 self.reopen_for_photos();
             }
-            // The app follows the light or dark choice; no window to redraw.
-            Effect::Theme => {}
+            Effect::Theme | Effect::TextScale => {}
             Effect::Language => self.offer_restart(),
             Effect::Calendar => {
                 self.calendar.preferences_changed();

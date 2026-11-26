@@ -224,6 +224,22 @@ mod tests {
     }
 
     #[test]
+    fn global_text_size_defaults_and_round_trips_without_changing_message_zoom() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.toml");
+        std::fs::write(&path, "text_size = 'larger'\n").unwrap();
+        let mut settings = Settings::load(&path);
+        assert_eq!(settings.text_scale_percent(), 100);
+        crate::settings::Change::TextScale(137).apply(&mut settings);
+        let saver = Saver::new(path.clone());
+        saver.save(&settings);
+        saver.flush();
+        let restored = Settings::load(&path);
+        assert_eq!(restored.text_scale_percent(), 137);
+        assert_eq!(restored.text_size, TextSize::Larger);
+    }
+
+    #[test]
     fn the_saver_writes_the_newest_settings_in_order() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("settings.toml");

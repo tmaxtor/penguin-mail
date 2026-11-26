@@ -1030,11 +1030,11 @@ msgstr "{provider} はブラウザーでログインします"
 msgid "Continue opens {provider}'s sign-in page in your browser."
 msgstr "「続行」を押すと、ブラウザーで {provider} のログインページを開きます。"
 
-#: app/src/app.rs:428
+#: app/src/app.rs:487
 msgid "Could not mark all mail as read: {reason}"
 msgstr "すべてのメールを既読にできませんでした: {reason}"
 
-#: app/src/app.rs:475
+#: app/src/app.rs:534
 msgid ""
 "Your preferences could not be read, so Penguin Mail started from the "
 "defaults. The old file is kept as {file}."
@@ -4378,7 +4378,7 @@ msgstr "{size} 未満"
 msgid "Larger than {size}"
 msgstr "{size} 超"
 
-#: app/src/rules.rs:251 app/src/settings/mod.rs:960
+#: app/src/rules.rs:251 app/src/settings/mod.rs:965
 msgid "All mail"
 msgstr "すべてのメール"
 
@@ -4476,229 +4476,229 @@ msgstr "このコンピューター上で、Penguin Mail の起動中に実行"
 msgid "On the server"
 msgstr "サーバー上"
 
-#: app/src/settings/mod.rs:229 app/src/settings/mod.rs:438
-#: app/src/settings/mod.rs:872 app/src/ui/assistant_mcp_prefs.rs:202
-#: app/src/ui/preferences.rs:1137
+#: app/src/settings/mod.rs:233 app/src/settings/mod.rs:442
+#: app/src/settings/mod.rs:877 app/src/ui/assistant_mcp_prefs.rs:202
+#: app/src/ui/preferences.rs:1155
 msgid "Off"
 msgstr "無効"
 
-#: app/src/settings/mod.rs:230
+#: app/src/settings/mod.rs:234
 msgid "Local Server"
 msgstr "ローカルサーバー"
 
-#: app/src/settings/mod.rs:231
+#: app/src/settings/mod.rs:235
 msgid "Anthropic API"
 msgstr "Anthropic API"
 
-#: app/src/settings/mod.rs:232
+#: app/src/settings/mod.rs:236
 msgid "Claude Subscription"
 msgstr "Claude サブスクリプション"
 
-#: app/src/settings/mod.rs:257 app/src/ui/window.rs:3797
+#: app/src/settings/mod.rs:261 app/src/ui/window.rs:3797
 #: app/src/ui/window.rs:3885
 msgid "Assistant"
 msgstr "アシスタント"
 
-#: app/src/settings/mod.rs:258 app/src/ui/preferences.rs:233
+#: app/src/settings/mod.rs:262 app/src/ui/preferences.rs:233
 msgid "Translation"
 msgstr "翻訳"
 
 #. The assistant's running label says "Unsubscribing" too, and
 #. means the act rather than the feature, which Portuguese
 #. words differently.
-#: app/src/settings/mod.rs:262
+#: app/src/settings/mod.rs:266
 msgctxt "ai feature"
 msgid "Unsubscribing"
 msgstr "配信停止"
 
-#: app/src/settings/mod.rs:268
+#: app/src/settings/mod.rs:272
 msgid "Answers questions and acts on your mail"
 msgstr "メールに関する質問に答え、操作します"
 
-#: app/src/settings/mod.rs:269
+#: app/src/settings/mod.rs:273
 msgid "Translates a message when you ask"
 msgstr "要求に応じてメッセージを翻訳します"
 
-#: app/src/settings/mod.rs:271
+#: app/src/settings/mod.rs:275
 msgid "Reads a newsletter's unsubscribe page when the rules cannot"
 msgstr "ルールで処理できないニュースレターの配信停止ページを読み取ります"
 
-#: app/src/settings/mod.rs:309
+#: app/src/settings/mod.rs:313
 msgid "Same as the Assistant"
 msgstr "アシスタントと同じ"
 
-#: app/src/settings/mod.rs:439
+#: app/src/settings/mod.rs:443
 msgid "Claude's own only"
 msgstr "Claude 内蔵のみ"
 
-#: app/src/settings/mod.rs:440
+#: app/src/settings/mod.rs:444
 msgid "Brave Search"
 msgstr "Brave Search"
 
-#: app/src/settings/mod.rs:441
+#: app/src/settings/mod.rs:445
 msgid "SearXNG"
 msgstr "SearXNG"
 
-#: app/src/settings/mod.rs:442
+#: app/src/settings/mod.rs:446
 msgid "Keenable"
 msgstr "Keenable"
 
-#: app/src/settings/mod.rs:621
+#: app/src/settings/mod.rs:626
 msgid "Rich text"
 msgstr "リッチテキスト"
 
-#: app/src/settings/mod.rs:622
+#: app/src/settings/mod.rs:627
 msgid "Markdown"
 msgstr "Markdown"
 
-#: app/src/settings/mod.rs:641 app/src/settings/mod.rs:663
+#: app/src/settings/mod.rs:646 app/src/settings/mod.rs:668
 #: app/src/ui/preferences/accounts.rs:150
 msgid "Automatic"
 msgstr "自動"
 
-#: app/src/settings/mod.rs:642 app/src/ui/calendar/editor.rs:2166
+#: app/src/settings/mod.rs:647 app/src/ui/calendar/editor.rs:2166
 msgid "Monday"
 msgstr "月曜日"
 
-#: app/src/settings/mod.rs:643 app/src/ui/calendar/editor.rs:2172
+#: app/src/settings/mod.rs:648 app/src/ui/calendar/editor.rs:2172
 msgid "Sunday"
 msgstr "日曜日"
 
-#: app/src/settings/mod.rs:664
+#: app/src/settings/mod.rs:669
 msgid "12-hour (AM/PM)"
 msgstr "12時間制（AM/PM）"
 
-#: app/src/settings/mod.rs:665
+#: app/src/settings/mod.rs:670
 msgid "24-hour"
 msgstr "24時間制"
 
-#: app/src/settings/mod.rs:703
+#: app/src/settings/mod.rs:708
 msgid "When opened"
 msgstr "開いたとき"
 
-#: app/src/settings/mod.rs:704
+#: app/src/settings/mod.rs:709
 msgid "After 2 seconds"
 msgstr "2 秒後"
 
-#: app/src/settings/mod.rs:705
+#: app/src/settings/mod.rs:710
 msgid "Only when I choose"
 msgstr "自分で選んだときのみ"
 
-#: app/src/settings/mod.rs:721 app/src/settings/mod.rs:739
+#: app/src/settings/mod.rs:726 app/src/settings/mod.rs:744
 msgid "Ask each time"
 msgstr "毎回確認"
 
-#: app/src/settings/mod.rs:722
+#: app/src/settings/mod.rs:727
 msgid "Always load"
 msgstr "常に読み込む"
 
-#: app/src/settings/mod.rs:740
+#: app/src/settings/mod.rs:745
 msgid "Never ask"
 msgstr "確認しない"
 
-#: app/src/settings/mod.rs:767
+#: app/src/settings/mod.rs:772
 msgid "No Preview"
 msgstr "プレビューなし"
 
-#: app/src/settings/mod.rs:768
+#: app/src/settings/mod.rs:773
 msgid "1 Line"
 msgstr "1 行"
 
-#: app/src/settings/mod.rs:769
+#: app/src/settings/mod.rs:774
 msgid "2 Lines"
 msgstr "2 行"
 
-#: app/src/settings/mod.rs:796
+#: app/src/settings/mod.rs:801
 msgid "Short (80 Characters)"
 msgstr ""
 
-#: app/src/settings/mod.rs:797
+#: app/src/settings/mod.rs:802
 msgid "Medium (140 Characters)"
 msgstr ""
 
-#: app/src/settings/mod.rs:798
+#: app/src/settings/mod.rs:803
 msgid "Long (280 Characters)"
 msgstr ""
 
-#: app/src/settings/mod.rs:832
+#: app/src/settings/mod.rs:837
 msgid "Small"
 msgstr "小"
 
-#: app/src/settings/mod.rs:833
+#: app/src/settings/mod.rs:838
 msgid "Default"
 msgstr "標準"
 
-#: app/src/settings/mod.rs:834
+#: app/src/settings/mod.rs:839
 msgid "Large"
 msgstr "大"
 
-#: app/src/settings/mod.rs:835
+#: app/src/settings/mod.rs:840
 msgid "Larger"
 msgstr "特大"
 
-#: app/src/settings/mod.rs:873
+#: app/src/settings/mod.rs:878
 msgid "5 seconds"
 msgstr "5 秒"
 
-#: app/src/settings/mod.rs:874
+#: app/src/settings/mod.rs:879
 msgid "10 seconds"
 msgstr "10 秒"
 
-#: app/src/settings/mod.rs:875
+#: app/src/settings/mod.rs:880
 msgid "20 seconds"
 msgstr "20 秒"
 
-#: app/src/settings/mod.rs:876
+#: app/src/settings/mod.rs:881
 msgid "30 seconds"
 msgstr "30 秒"
 
-#: app/src/settings/mod.rs:893
+#: app/src/settings/mod.rs:898
 msgid "Follow system"
 msgstr "システムに従う"
 
-#: app/src/settings/mod.rs:894
+#: app/src/settings/mod.rs:899
 msgid "Light"
 msgstr "ライト"
 
-#: app/src/settings/mod.rs:895
+#: app/src/settings/mod.rs:900
 msgid "Dark"
 msgstr "ダーク"
 
-#: app/src/settings/mod.rs:929
+#: app/src/settings/mod.rs:934
 msgid "Every second"
 msgid_plural "Every {count} seconds"
 msgstr[0] "{count} 秒ごと"
 
-#: app/src/settings/mod.rs:937
+#: app/src/settings/mod.rs:942
 msgid "Every minute"
 msgid_plural "Every {count} minutes"
 msgstr[0] "{count} 分ごと"
 
-#: app/src/settings/mod.rs:954
+#: app/src/settings/mod.rs:959
 msgid "2 weeks"
 msgstr "2 週間"
 
-#: app/src/settings/mod.rs:955
+#: app/src/settings/mod.rs:960
 msgid "30 days"
 msgstr "30 日"
 
-#: app/src/settings/mod.rs:956
+#: app/src/settings/mod.rs:961
 msgid "90 days"
 msgstr "90 日"
 
-#: app/src/settings/mod.rs:957
+#: app/src/settings/mod.rs:962
 msgid "1 year"
 msgstr "1 年"
 
-#: app/src/settings/mod.rs:958
+#: app/src/settings/mod.rs:963
 msgid "2 years"
 msgstr "2 年"
 
-#: app/src/settings/mod.rs:959
+#: app/src/settings/mod.rs:964
 msgid "5 years"
 msgstr "5 年"
 
-#: app/src/settings/mod.rs:981
+#: app/src/settings/mod.rs:986
 msgid ""
 "Every message stays on this computer. A large account takes a lot of disk "
 "space and memory, and its older mail downloads in the background."
@@ -4707,19 +4707,19 @@ msgstr ""
 "のディスク容量とメモリーを使い、古いメールはバックグラウンドでダウンロードし"
 "ます。"
 
-#: app/src/settings/mod.rs:983
+#: app/src/settings/mod.rs:988
 msgid "Everything in your inbox stays too, and older mail remains searchable"
 msgstr "受信トレイのメールもすべて保存し、古いメールも検索できます"
 
-#: app/src/settings/mod.rs:990
+#: app/src/settings/mod.rs:995
 msgid "256 MB"
 msgstr "256 MB"
 
-#: app/src/settings/mod.rs:991
+#: app/src/settings/mod.rs:996
 msgid "1 GB"
 msgstr "1 GB"
 
-#: app/src/settings/mod.rs:992
+#: app/src/settings/mod.rs:997
 msgid "4 GB"
 msgstr "4 GB"
 
@@ -4917,7 +4917,7 @@ msgstr "{version} の新機能"
 
 #: app/src/tray.rs:261 app/src/ui/about.rs:119 app/src/ui/about.rs:227
 #: app/src/ui/about.rs:235 app/src/ui/about.rs:242
-#: app/src/ui/preferences.rs:1197 app/src/update/mod.rs:108
+#: app/src/ui/preferences.rs:1215 app/src/update/mod.rs:108
 msgid "Check for Updates"
 msgstr "更新を確認"
 
@@ -5260,7 +5260,7 @@ msgid "Penguin Mail keeps every message it downloads on this computer."
 msgstr "ダウンロードしたすべてのメッセージをこのコンピューターに保存します。"
 
 #: app/src/ui/add_account.rs:1589 app/src/ui/add_account.rs:1590
-#: app/src/ui/preferences.rs:1558
+#: app/src/ui/preferences.rs:1576
 msgid "Days"
 msgstr "日数"
 
@@ -5484,7 +5484,7 @@ msgstr "切り離す"
 
 #: app/src/ui/assistant.rs:128 app/src/ui/key_import.rs:213
 #: app/src/ui/key_import.rs:217 app/src/ui/signature_editor.rs:365
-#: app/src/ui/window.rs:4612
+#: app/src/ui/window.rs:4611
 msgid "Close"
 msgstr "閉じる"
 
@@ -6085,7 +6085,7 @@ msgstr ""
 "鍵、ホームフォルダーにアクセスできないサンドボックスで実行し、コマンドごとに"
 "確認します。"
 
-#: app/src/ui/assistant_skills_prefs.rs:33 app/src/ui/preferences.rs:582
+#: app/src/ui/assistant_skills_prefs.rs:33 app/src/ui/preferences.rs:600
 msgid "Not Available"
 msgstr "利用できません"
 
@@ -6270,7 +6270,7 @@ msgid "Declined"
 msgstr "不参加"
 
 #: app/src/ui/calendar/block.rs:613 app/src/ui/calendar/words.rs:190
-#: app/src/ui/preferences.rs:1364
+#: app/src/ui/preferences.rs:1382
 msgid "{start}–{end}"
 msgstr "{start}–{end}"
 
@@ -6384,11 +6384,11 @@ msgstr "終了日"
 msgid "End time"
 msgstr "終了時刻"
 
-#: app/src/ui/calendar/editor.rs:753 app/src/ui/preferences.rs:1510
+#: app/src/ui/calendar/editor.rs:753 app/src/ui/preferences.rs:1528
 msgid "Starts"
 msgstr "開始"
 
-#: app/src/ui/calendar/editor.rs:756 app/src/ui/preferences.rs:1512
+#: app/src/ui/calendar/editor.rs:756 app/src/ui/preferences.rs:1530
 msgid "Ends"
 msgstr "終了"
 
@@ -7052,7 +7052,7 @@ msgstr "終日"
 
 #: app/src/ui/calendar/mod.rs:1816 app/src/ui/calendar/mod.rs:3068
 #: app/src/ui/calendar/sidebar.rs:357 app/src/ui/calendar/words.rs:412
-#: app/src/ui/preferences.rs:1378 app/src/ui/preferences.rs:1566
+#: app/src/ui/preferences.rs:1396 app/src/ui/preferences.rs:1584
 msgid "%a"
 msgstr "%a"
 
@@ -8145,7 +8145,7 @@ msgstr "もう一度探す"
 msgid "Edit…"
 msgstr "編集…"
 
-#: app/src/ui/contacts_prefs.rs:257 app/src/ui/preferences.rs:567
+#: app/src/ui/contacts_prefs.rs:257 app/src/ui/preferences.rs:585
 msgid "Shared mailboxes support mail only."
 msgstr "共有メールボックスはメールのみ対応しています。"
 
@@ -9245,7 +9245,7 @@ msgid "{folder}, always shown"
 msgstr ""
 
 #: app/src/ui/manage_folders.rs:402 app/src/ui/manage_folders.rs:508
-#: app/src/ui/preferences.rs:679
+#: app/src/ui/preferences.rs:697
 msgid "This account is not syncing yet"
 msgstr "このアカウントはまだ同期していません"
 
@@ -9440,166 +9440,180 @@ msgstr "外観"
 msgid "Style"
 msgstr "スタイル"
 
-#: app/src/ui/preferences.rs:256
-msgid "Text Size"
-msgstr "文字サイズ"
+#: app/src/ui/preferences.rs:257
+#, fuzzy
+#| msgid "Message"
+msgid "Message Zoom"
+msgstr "メッセージ"
 
-#: app/src/ui/preferences.rs:263
+#: app/src/ui/preferences.rs:264
 msgid "Message Preview"
 msgstr "メッセージのプレビュー"
 
-#: app/src/ui/preferences.rs:264
+#: app/src/ui/preferences.rs:265
 msgid "Lines of message text below the subject"
 msgstr "件名の下に表示する本文の行数"
 
-#: app/src/ui/preferences.rs:270
+#: app/src/ui/preferences.rs:271
 msgid "Bold Unread Messages"
 msgstr "未読メッセージを太字にする"
 
-#: app/src/ui/preferences.rs:272
+#: app/src/ui/preferences.rs:273
 msgid "Use heavier text for unread senders, subjects, and dates"
 msgstr "未読の差出人、件名、日付を太い文字で表示します"
 
-#: app/src/ui/preferences.rs:279
+#: app/src/ui/preferences.rs:280
 msgid "Always Bold Senders"
 msgstr "差出人を常に太字にする"
 
-#: app/src/ui/preferences.rs:281
+#: app/src/ui/preferences.rs:282
 msgid "Use heavier sender text for both read and unread messages"
 msgstr "既読・未読にかかわらず差出人を太い文字で表示します"
 
-#: app/src/ui/preferences.rs:288
+#: app/src/ui/preferences.rs:289
 msgid "Show Avatars"
 msgstr "アバターを表示"
 
-#: app/src/ui/preferences.rs:290
+#: app/src/ui/preferences.rs:291
 msgid "Show contact pictures or initials in the message list"
 msgstr "メッセージ一覧に連絡先の写真またはイニシャルを表示します"
 
-#: app/src/ui/preferences.rs:301
+#: app/src/ui/preferences.rs:302
 msgid "Draw Messages Without the GPU"
 msgstr "GPUを使わずにメッセージを描画"
 
-#: app/src/ui/preferences.rs:303
+#: app/src/ui/preferences.rs:304
 msgid ""
 "Turn on when messages show blank or garbled. Takes effect after a restart"
 msgstr ""
 "メッセージが空白や乱れた表示になる場合に有効にします。再起動後に反映されます"
 
-#: app/src/ui/preferences.rs:315 app/src/ui/preferences.rs:320
+#: app/src/ui/preferences.rs:316
+#, fuzzy
+#| msgid "Text Size"
+msgid "Global Text Size (%)"
+msgstr "文字サイズ"
+
+#: app/src/ui/preferences.rs:318
+#, fuzzy
+#| msgid "Scheduling a message"
+msgid "Scales the interface and messages"
+msgstr "メッセージの送信を予約中"
+
+#: app/src/ui/preferences.rs:333 app/src/ui/preferences.rs:338
 msgid "Notifications"
 msgstr "通知"
 
-#: app/src/ui/preferences.rs:324
+#: app/src/ui/preferences.rs:342
 msgid "Notify About New Mail"
 msgstr "新着メールを通知"
 
-#: app/src/ui/preferences.rs:331
+#: app/src/ui/preferences.rs:349
 msgid "Show Sender and Subject"
 msgstr "差出人と件名を表示"
 
-#: app/src/ui/preferences.rs:332
+#: app/src/ui/preferences.rs:350
 msgid "Turn off to see only how much mail arrived"
 msgstr "無効にすると、届いたメールの件数だけを表示します"
 
-#: app/src/ui/preferences.rs:342
+#: app/src/ui/preferences.rs:360
 #, fuzzy
 #| msgid "Message Preview"
 msgid "Show Message Preview"
 msgstr "メッセージのプレビュー"
 
-#: app/src/ui/preferences.rs:344
+#: app/src/ui/preferences.rs:362
 #, fuzzy
 #| msgid "Lines of message text below the subject"
 msgid "Include a short extract of the message below the subject"
 msgstr "件名の下に表示する本文の行数"
 
-#: app/src/ui/preferences.rs:365
+#: app/src/ui/preferences.rs:383
 #, fuzzy
 #| msgid "Subject"
 msgid "Bold Subject"
 msgstr "件名"
 
-#: app/src/ui/preferences.rs:382
+#: app/src/ui/preferences.rs:400
 #, fuzzy
 #| msgid "Message Preview"
 msgid "Message Preview Length"
 msgstr "メッセージのプレビュー"
 
-#: app/src/ui/preferences.rs:384
+#: app/src/ui/preferences.rs:402
 msgid "The desktop may show fewer characters to fit the notification"
 msgstr ""
 
-#: app/src/ui/preferences.rs:402
+#: app/src/ui/preferences.rs:420
 msgid "Only for VIPs"
 msgstr "VIPのみ"
 
-#: app/src/ui/preferences.rs:403
+#: app/src/ui/preferences.rs:421
 msgid "Stay quiet about mail from everyone else"
 msgstr "VIP以外からのメールは通知しません"
 
-#: app/src/ui/preferences.rs:413
+#: app/src/ui/preferences.rs:431
 msgid "Buttons"
 msgstr "ボタン"
 
-#: app/src/ui/preferences.rs:415
+#: app/src/ui/preferences.rs:433
 msgid "What a notification offers besides opening the conversation"
 msgstr "通知からスレッドを開く以外にできる操作"
 
-#: app/src/ui/preferences.rs:451
+#: app/src/ui/preferences.rs:469
 msgid "Event Reminders"
 msgstr "予定のリマインダー"
 
-#: app/src/ui/preferences.rs:453
+#: app/src/ui/preferences.rs:471
 msgid ""
 "A notification before each event, at the times the event or its calendar sets"
 msgstr "予定またはカレンダーで設定した時刻に、開始前の通知を表示します"
 
-#: app/src/ui/preferences.rs:476 app/src/ui/preferences.rs:483
+#: app/src/ui/preferences.rs:494 app/src/ui/preferences.rs:501
 #: app/src/ui/sidebar/sections.rs:28 app/src/ui/smart_editor.rs:47
 #: app/src/ui/window/customize_mailboxes.rs:624
 msgid "Accounts"
 msgstr "アカウント"
 
-#: app/src/ui/preferences.rs:484
+#: app/src/ui/preferences.rs:502
 msgid ""
 "Signature, addresses you send from, servers, contacts, and the space the "
 "server reports."
 msgstr "署名、差出人アドレス、サーバー、連絡先、サーバーが報告する使用容量。"
 
-#: app/src/ui/preferences.rs:489 app/src/ui/preferences.rs:742
+#: app/src/ui/preferences.rs:507 app/src/ui/preferences.rs:760
 msgid "No Accounts Yet"
 msgstr "アカウントがありません"
 
-#: app/src/ui/preferences.rs:491 app/src/ui/preferences.rs:744
+#: app/src/ui/preferences.rs:509 app/src/ui/preferences.rs:762
 msgid "Add an account to choose a sender and write signatures."
 msgstr "アカウントを追加すると、差出人の選択や署名の作成ができます。"
 
-#: app/src/ui/preferences.rs:541
+#: app/src/ui/preferences.rs:559
 msgid "Mailbox storage is not available through this connection."
 msgstr "この接続ではメールボックスの使用容量を取得できません。"
 
-#: app/src/ui/preferences.rs:543
+#: app/src/ui/preferences.rs:561
 msgid "The server has not reported its storage usage."
 msgstr "サーバーが使用容量を報告していません。"
 
-#: app/src/ui/preferences.rs:546
+#: app/src/ui/preferences.rs:564
 msgid "Space on the Server"
 msgstr "サーバーの使用容量"
 
-#: app/src/ui/preferences.rs:560
+#: app/src/ui/preferences.rs:578
 msgid "Shared Mailbox"
 msgstr "共有メールボックス"
 
-#: app/src/ui/preferences.rs:564
+#: app/src/ui/preferences.rs:582
 msgid "Signed in through {account}"
 msgstr "{account} 経由でサインイン"
 
-#: app/src/ui/preferences.rs:640 app/src/ui/sender_prefs/signature.rs:32
+#: app/src/ui/preferences.rs:658 app/src/ui/sender_prefs/signature.rs:32
 msgid "Signature"
 msgstr "署名"
 
-#: app/src/ui/preferences.rs:646
+#: app/src/ui/preferences.rs:664
 #, fuzzy
 #| msgid ""
 #| "Used by this account and addresses without their own signature. Markdown "
@@ -9614,67 +9628,67 @@ msgstr ""
 "<email> は接尾辞を含む送信アドレスに、<domain> はそのドメインに置き換わりま"
 "す。"
 
-#: app/src/ui/preferences.rs:650 app/src/ui/sender_prefs.rs:127
+#: app/src/ui/preferences.rs:668 app/src/ui/sender_prefs.rs:127
 #: app/src/ui/sender_prefs/signature.rs:22
 msgid "Signature for {account}"
 msgstr "{account}の署名"
 
-#: app/src/ui/preferences.rs:659
+#: app/src/ui/preferences.rs:677
 msgid "Import from Gmail"
 msgstr "Gmailからインポート"
 
-#: app/src/ui/preferences.rs:698
+#: app/src/ui/preferences.rs:716
 msgid "Imported the signature from Gmail"
 msgstr "Gmailから署名をインポートしました"
 
-#: app/src/ui/preferences.rs:702
+#: app/src/ui/preferences.rs:720
 msgid "Gmail has no signature for this account"
 msgstr "Gmailにこのアカウントの署名がありません"
 
-#: app/src/ui/preferences.rs:705
+#: app/src/ui/preferences.rs:723
 msgid "Could not import: {reason}"
 msgstr "インポートできませんでした: {reason}"
 
-#: app/src/ui/preferences.rs:737 app/src/ui/window/shortcuts.rs:239
+#: app/src/ui/preferences.rs:755 app/src/ui/window/shortcuts.rs:239
 msgid "Writing"
 msgstr "作成"
 
-#: app/src/ui/preferences.rs:753 app/src/ui/preferences/accounts.rs:188
+#: app/src/ui/preferences.rs:771 app/src/ui/preferences/accounts.rs:188
 msgid "New Messages"
 msgstr "新規メッセージ"
 
-#: app/src/ui/preferences.rs:757
+#: app/src/ui/preferences.rs:775
 msgid "New Messages Start As"
 msgstr "新規メッセージの形式"
 
-#: app/src/ui/preferences.rs:759
+#: app/src/ui/preferences.rs:777
 msgid "Rich text styles the words themselves; Markdown shows its marks"
 msgstr "リッチテキストは文字に書式を適用し、Markdownは書式記号を表示します"
 
 #. The seconds change every second and the name stays put, so a
 #. screen reader is not told each one.
-#: app/src/ui/preferences.rs:766 app/src/ui/sidebar.rs:86
+#: app/src/ui/preferences.rs:784 app/src/ui/sidebar.rs:86
 #: app/src/ui/sidebar.rs:99
 msgid "Undo Send"
 msgstr "送信の取り消し"
 
-#: app/src/ui/preferences.rs:768
+#: app/src/ui/preferences.rs:786
 msgid "How long you can take a message back after sending it"
 msgstr "送信後に取り消せる時間"
 
-#: app/src/ui/preferences.rs:775
+#: app/src/ui/preferences.rs:793
 msgid "Check for Missing Attachments"
 msgstr "添付忘れを確認"
 
-#: app/src/ui/preferences.rs:777
+#: app/src/ui/preferences.rs:795
 msgid "Ask before sending a message that promises a file and carries none"
 msgstr "ファイルに言及しているのに添付がない場合、送信前に確認します"
 
-#: app/src/ui/preferences.rs:811
+#: app/src/ui/preferences.rs:829
 msgid "Signing and Encryption"
 msgstr "署名と暗号化"
 
-#: app/src/ui/preferences.rs:813
+#: app/src/ui/preferences.rs:831
 msgid ""
 "Penguin Mail signs and encrypts through GnuPG, which holds your keys and "
 "asks for your passphrase itself."
@@ -9682,49 +9696,49 @@ msgstr ""
 "Penguin MailはGnuPGで署名と暗号化を行います。GnuPGが鍵を管理し、パスフレーズ"
 "を求めます。"
 
-#: app/src/ui/preferences.rs:818
+#: app/src/ui/preferences.rs:836
 msgid "Your OpenPGP Keys"
 msgstr "自分のOpenPGP鍵"
 
-#: app/src/ui/preferences.rs:819
+#: app/src/ui/preferences.rs:837
 msgid "Asking gpg…"
 msgstr "gpgに問い合わせ中…"
 
-#: app/src/ui/preferences.rs:823
+#: app/src/ui/preferences.rs:841
 msgid "Your S/MIME Certificates"
 msgstr "自分のS/MIME証明書"
 
-#: app/src/ui/preferences.rs:824
+#: app/src/ui/preferences.rs:842
 msgid "Asking gpgsm…"
 msgstr "gpgsmに問い合わせ中…"
 
-#: app/src/ui/preferences.rs:831
+#: app/src/ui/preferences.rs:849
 msgid "Sign My Messages by Default"
 msgstr "標準でメッセージに署名"
 
-#: app/src/ui/preferences.rs:832
+#: app/src/ui/preferences.rs:850
 msgid "New messages open with Sign turned on"
 msgstr "新規メッセージで署名を有効にします"
 
-#: app/src/ui/preferences.rs:838
+#: app/src/ui/preferences.rs:856
 msgid "Encrypt When I Can"
 msgstr "可能な場合は暗号化"
 
-#: app/src/ui/preferences.rs:840
+#: app/src/ui/preferences.rs:858
 msgid "Turn Encrypt on as soon as every recipient has a key or a certificate"
 msgstr "すべての宛先に鍵または証明書がそろったら暗号化を有効にします"
 
-#: app/src/ui/preferences.rs:929
+#: app/src/ui/preferences.rs:947
 msgid "gpg could not be asked: {reason}"
 msgstr "gpgに問い合わせできませんでした: {reason}"
 
-#: app/src/ui/preferences.rs:948
+#: app/src/ui/preferences.rs:966
 msgid "gpgsm could not be asked: {reason}"
 msgstr "gpgsmに問い合わせできませんでした: {reason}"
 
 #. The verb agrees with the programs: "gpg, which holds" but "gpg and
 #. gpgsm, which hold".
-#: app/src/ui/preferences.rs:957
+#: app/src/ui/preferences.rs:975
 msgid ""
 "Penguin Mail signs and encrypts through {programs}, which holds your keys "
 "and asks for your passphrase itself."
@@ -9735,11 +9749,11 @@ msgstr[0] ""
 "Penguin Mailは{programs}で署名と暗号化を行います。これらのプログラムが鍵を管"
 "理し、パスフレーズを求めます。"
 
-#: app/src/ui/preferences.rs:989 app/src/ui/preferences.rs:1002
+#: app/src/ui/preferences.rs:1007 app/src/ui/preferences.rs:1020
 msgid "Spelling"
 msgstr "スペルチェック"
 
-#: app/src/ui/preferences.rs:991
+#: app/src/ui/preferences.rs:1009
 msgid ""
 "No dictionaries are installed, so Penguin Mail is not checking spelling. "
 "Install a Hunspell dictionary, such as hunspell-en-us or hunspell-pt-pt, and "
@@ -9749,66 +9763,66 @@ msgstr ""
 "やhunspell-pt-ptなどのHunspell辞書をインストールして、作成ウィンドウを開き直"
 "してください。"
 
-#: app/src/ui/preferences.rs:1004
+#: app/src/ui/preferences.rs:1022
 msgid ""
 "The language each account checks spelling in. Dictionaries installed: "
 "{languages}."
 msgstr ""
 "各アカウントでスペルを確認する言語。インストール済みの辞書: {languages}。"
 
-#: app/src/ui/preferences.rs:1016
+#: app/src/ui/preferences.rs:1034
 msgid "System: {language}"
 msgstr "システム: {language}"
 
-#: app/src/ui/preferences.rs:1031
+#: app/src/ui/preferences.rs:1049
 msgid "All Installed Languages"
 msgstr "インストール済みのすべての言語"
 
-#: app/src/ui/preferences.rs:1074
+#: app/src/ui/preferences.rs:1092
 msgid "Sync"
 msgstr "同期"
 
-#: app/src/ui/preferences.rs:1082
+#: app/src/ui/preferences.rs:1100
 msgid "Checking"
 msgstr "確認"
 
-#: app/src/ui/preferences.rs:1088
+#: app/src/ui/preferences.rs:1106
 msgid "Check for New Mail"
 msgstr "新着メールを確認"
 
-#: app/src/ui/preferences.rs:1097
+#: app/src/ui/preferences.rs:1115
 msgid "Storage"
 msgstr "保存"
 
-#: app/src/ui/preferences.rs:1105
+#: app/src/ui/preferences.rs:1123
 msgid "Keep Mail on This Computer For"
 msgstr "このコンピューターにメールを保存する期間"
 
-#: app/src/ui/preferences.rs:1126
+#: app/src/ui/preferences.rs:1144
 msgid "Message text kept for opening offline"
 msgstr "オフラインで開くために保存するメッセージ本文"
 
-#: app/src/ui/preferences.rs:1129
+#: app/src/ui/preferences.rs:1147
 msgid "Message Cache"
 msgstr "メッセージキャッシュ"
 
-#: app/src/ui/preferences.rs:1138
+#: app/src/ui/preferences.rs:1156
 msgid "100 messages"
 msgstr "100 件"
 
-#: app/src/ui/preferences.rs:1139
+#: app/src/ui/preferences.rs:1157
 msgid "300 messages"
 msgstr "300 件"
 
-#: app/src/ui/preferences.rs:1140
+#: app/src/ui/preferences.rs:1158
 msgid "1,000 messages"
 msgstr "1,000 件"
 
-#: app/src/ui/preferences.rs:1144
+#: app/src/ui/preferences.rs:1162
 msgid "Download Recent Inbox Messages"
 msgstr "受信トレイの最近のメッセージをダウンロード"
 
-#: app/src/ui/preferences.rs:1145
+#: app/src/ui/preferences.rs:1163
 msgid ""
 "Download message text in each account for faster opening and offline "
 "reading. Attachments and remote images aren't downloaded."
@@ -9817,148 +9831,148 @@ msgstr ""
 "ラインでも読めるようにします。添付ファイルとリモート画像はダウンロードしませ"
 "ん。"
 
-#: app/src/ui/preferences.rs:1172
+#: app/src/ui/preferences.rs:1190
 msgid "Startup"
 msgstr "起動"
 
-#: app/src/ui/preferences.rs:1175
+#: app/src/ui/preferences.rs:1193
 msgid "Start in the Tray at Login"
 msgstr "ログイン時にトレイで起動"
 
-#: app/src/ui/preferences.rs:1190
+#: app/src/ui/preferences.rs:1208
 msgid "Not available in demo mode"
 msgstr "デモモードでは利用できません"
 
-#: app/src/ui/preferences.rs:1198
+#: app/src/ui/preferences.rs:1216
 msgid "Look for a new release once a day"
 msgstr "1日1回、新しいリリースを確認します"
 
-#: app/src/ui/preferences.rs:1239
+#: app/src/ui/preferences.rs:1257
 msgid "{used} of {limit}"
 msgstr "{limit}中{used}"
 
-#: app/src/ui/preferences.rs:1251
+#: app/src/ui/preferences.rs:1269
 msgid "{amount} · Full"
 msgstr "{amount} · 空き容量なし"
 
-#: app/src/ui/preferences.rs:1253
+#: app/src/ui/preferences.rs:1271
 msgid "{amount} · Nearly full"
 msgstr "{amount} · 空き容量わずか"
 
-#: app/src/ui/preferences.rs:1265
+#: app/src/ui/preferences.rs:1283
 msgid "Senders Who May Load Images"
 msgstr "画像の読み込みを許可する差出人"
 
-#: app/src/ui/preferences.rs:1266 app/src/ui/preferences.rs:1275
+#: app/src/ui/preferences.rs:1284 app/src/ui/preferences.rs:1293
 msgid "Nobody yet"
 msgstr "まだいません"
 
-#: app/src/ui/preferences.rs:1277
+#: app/src/ui/preferences.rs:1295
 msgid "{count} sender"
 msgid_plural "{count} senders"
 msgstr[0] "{count}人の差出人"
 
-#: app/src/ui/preferences.rs:1287
+#: app/src/ui/preferences.rs:1305
 msgid "Anyone at this domain"
 msgstr "このドメインの全員"
 
-#: app/src/ui/preferences.rs:1289
+#: app/src/ui/preferences.rs:1307
 msgid "This address"
 msgstr "このアドレス"
 
-#: app/src/ui/preferences.rs:1294
+#: app/src/ui/preferences.rs:1312
 msgid "Stop Loading Images from This Sender"
 msgstr "この差出人の画像の自動読み込みを停止"
 
-#: app/src/ui/preferences.rs:1301
+#: app/src/ui/preferences.rs:1319
 msgid "Stop loading images from {sender}"
 msgstr "{sender}の画像の自動読み込みを停止"
 
-#: app/src/ui/preferences.rs:1371
+#: app/src/ui/preferences.rs:1389
 msgid "Monday to Friday"
 msgstr "月曜日から金曜日"
 
-#: app/src/ui/preferences.rs:1372
+#: app/src/ui/preferences.rs:1390
 msgid "Every day of the week"
 msgstr "毎日"
 
-#: app/src/ui/preferences.rs:1373
+#: app/src/ui/preferences.rs:1391
 msgid "No days"
 msgstr "曜日未選択"
 
-#: app/src/ui/preferences.rs:1380
+#: app/src/ui/preferences.rs:1398
 msgid ", "
 msgstr "、"
 
-#: app/src/ui/preferences.rs:1383
+#: app/src/ui/preferences.rs:1401
 msgid "{time}, {days}"
 msgstr "{time}、{days}"
 
-#: app/src/ui/preferences.rs:1446
+#: app/src/ui/preferences.rs:1464
 msgid "Time Format"
 msgstr "時刻の形式"
 
-#: app/src/ui/preferences.rs:1450
+#: app/src/ui/preferences.rs:1468
 msgid "Automatic follows the system clock format"
 msgstr "自動ではシステムの時刻形式に従います"
 
-#: app/src/ui/preferences.rs:1464
+#: app/src/ui/preferences.rs:1482
 msgid "Week Starts On"
 msgstr "週の始まり"
 
-#: app/src/ui/preferences.rs:1469
+#: app/src/ui/preferences.rs:1487
 msgid "Automatic follows the locale's own first day of the week"
 msgstr "自動では、ロケールに応じた週の始まりを使います"
 
-#: app/src/ui/preferences.rs:1483
+#: app/src/ui/preferences.rs:1501
 msgid "Working Hours"
 msgstr "勤務時間"
 
-#: app/src/ui/preferences.rs:1502
+#: app/src/ui/preferences.rs:1520
 msgid "Hours"
 msgstr "時間"
 
-#: app/src/ui/preferences.rs:1553
+#: app/src/ui/preferences.rs:1571
 msgid "–"
 msgstr "～"
 
-#: app/src/ui/preferences.rs:1611
+#: app/src/ui/preferences.rs:1629
 msgid "Show Only Subscribed Folders"
 msgstr ""
 
-#: app/src/ui/preferences.rs:1613
+#: app/src/ui/preferences.rs:1631
 msgid ""
 "Folders you do not subscribe to stay out of the sidebar. Choose them in "
 "Manage Folders, in the account's menu."
 msgstr ""
 
-#: app/src/ui/preferences.rs:1657
+#: app/src/ui/preferences.rs:1675
 #, fuzzy
 #| msgid "Could not change the color: {reason}"
 msgid "Could not change the folders: {reason}"
 msgstr "色を変更できませんでした: {reason}"
 
-#: app/src/ui/preferences.rs:1701
+#: app/src/ui/preferences.rs:1719
 msgid "Never Translate"
 msgstr "翻訳しない言語"
 
-#: app/src/ui/preferences.rs:1703
+#: app/src/ui/preferences.rs:1721
 msgid "Messages in these languages get no offer to translate them"
 msgstr "これらの言語のメッセージでは翻訳を提案しません"
 
-#: app/src/ui/preferences.rs:1732
+#: app/src/ui/preferences.rs:1750
 msgid "Follow System"
 msgstr "システムに従う"
 
-#: app/src/ui/preferences.rs:1736
+#: app/src/ui/preferences.rs:1754
 msgid "Language"
 msgstr "言語"
 
-#: app/src/ui/preferences.rs:1737
+#: app/src/ui/preferences.rs:1755
 msgid "Penguin Mail shows a new language after a restart"
 msgstr "再起動後に新しい言語で表示します"
 
-#: app/src/ui/preferences.rs:1818 app/src/ui/sender_prefs/signature.rs:28
+#: app/src/ui/preferences.rs:1836 app/src/ui/sender_prefs/signature.rs:28
 msgid "No signature"
 msgstr "署名なし"
 
@@ -11545,23 +11559,23 @@ msgstr "{account} のカレンダーと連絡先を接続しました。"
 msgid "Open a message from the person first"
 msgstr "先にその人からのメッセージを開いてください"
 
-#: app/src/ui/window.rs:4495
+#: app/src/ui/window.rs:4494
 msgid "Penguin Mail shows the new language after a restart"
 msgstr "再起動後に新しい言語で表示します"
 
-#: app/src/ui/window.rs:4497 app/src/update/mod.rs:130
+#: app/src/ui/window.rs:4496 app/src/update/mod.rs:130
 msgid "Restart"
 msgstr "再起動"
 
-#: app/src/ui/window.rs:4561
+#: app/src/ui/window.rs:4560
 msgid "Show Rules"
 msgstr "ルールを表示"
 
-#: app/src/ui/window.rs:4587
+#: app/src/ui/window.rs:4586
 msgid "Messages That Will Not Download"
 msgstr "ダウンロードできないメッセージ"
 
-#: app/src/ui/window.rs:4589
+#: app/src/ui/window.rs:4588
 msgid ""
 "Penguin Mail could not download these from {address}'s server. It tries "
 "again at each check, except for a message too large to download."

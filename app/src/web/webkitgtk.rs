@@ -155,7 +155,9 @@ impl WebView {
         view.set_vexpand(true);
         keep_key_text_out_of_tab(&view);
         view.connect_realize(keep_key_text_out_of_tab);
-        WebView { view }
+        let page = WebView { view };
+        page.register_for_text_scale();
+        page
     }
 
     /// The widget that takes the page's place in a window.
@@ -268,7 +270,7 @@ impl WebView {
         self.view.zoom_level()
     }
 
-    pub fn set_zoom(&self, zoom: f64) {
+    pub(super) fn set_page_zoom(&self, zoom: f64) {
         self.view.set_zoom_level(zoom);
     }
 

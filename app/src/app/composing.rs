@@ -84,7 +84,7 @@ impl App {
         signature: Signature,
     ) -> Option<Rc<Composer>> {
         let draft = self.signed_when(draft, signature);
-        crate::ensure_gtk();
+        self.ensure_gtk();
         self.apply_style();
         let identities = self.identities();
         if identities.is_empty() {

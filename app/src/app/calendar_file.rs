@@ -13,7 +13,7 @@ impl App {
     /// Opens `path` in a window of its own, counted among the windows that
     /// keep the process from shedding its memory in the background.
     pub(super) fn open_calendar_file(self: &Rc<Self>, path: &Path) {
-        crate::ensure_gtk();
+        self.ensure_gtk();
         self.apply_style();
         self.window_opened();
         // The application is a plain GApplication, which quits when nothing

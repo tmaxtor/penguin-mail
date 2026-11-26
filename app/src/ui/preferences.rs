@@ -24,8 +24,8 @@ use crate::autostart;
 use crate::language;
 use crate::offered::missing_lines;
 use crate::settings::{
-    Change, Choice, Settings, cache_choices, nearest, nearest_window, poll_choices, window_choices,
-    window_note,
+    Change, Choice, MAX_TEXT_SCALE, MIN_TEXT_SCALE, Settings, cache_choices, nearest,
+    nearest_window, poll_choices, window_choices, window_note,
 };
 use crate::ui::window::Notice;
 use mailrs_domain::translate::{fill, fill_plural, gettext, with_reason};
@@ -251,9 +251,10 @@ fn appearance_page(app: &Rc<App>, settings: &Settings) -> adw::PreferencesPage {
         settings.color_scheme,
         Change::ColorScheme,
     ));
+    appearance.add(&text_scale_row(app, settings));
     appearance.add(&combo(
         app,
-        &gettext("Text Size"),
+        &gettext("Message Zoom"),
         None,
         settings.text_size,
         Change::TextSize,
@@ -308,6 +309,23 @@ fn appearance_page(app: &Rc<App>, settings: &Settings) -> adw::PreferencesPage {
     appearance.add(&language_row(app, settings));
     page.add(&appearance);
     page
+}
+
+fn text_scale_row(app: &Rc<App>, settings: &Settings) -> adw::SpinRow {
+    let row = adw::SpinRow::with_range(f64::from(MIN_TEXT_SCALE), f64::from(MAX_TEXT_SCALE), 1.0);
+    let title = gettext("Global Text Size (%)");
+    row.set_title(&title);
+    row.set_subtitle(&gettext("Scales the interface and messages"));
+    row.add_css_class("preference-explanation");
+    row.set_value(f64::from(settings.text_scale_percent()));
+    crate::ui::name(&row, &title);
+    let weak = Rc::downgrade(app);
+    row.connect_value_notify(move |row| {
+        if let Some(app) = weak.upgrade() {
+            app.change_settings(Change::TextScale(row.value().round() as i32));
+        }
+    });
+    row
 }
 
 fn notifications_page(app: &Rc<App>, settings: &Settings) -> adw::PreferencesPage {

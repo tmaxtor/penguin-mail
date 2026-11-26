@@ -27,6 +27,7 @@ pub enum Change {
     FollowSelectionDirection(bool),
     RemoteImages(RemoteImages),
     TextSize(TextSize),
+    TextScale(i32),
     PreviewLines(PreviewLines),
     BoldUnread(bool),
     BoldSenders(bool),
@@ -298,6 +299,9 @@ impl Change {
             Change::FollowSelectionDirection(on) => settings.follow_selection_direction = on,
             Change::RemoteImages(when) => settings.remote_images = when,
             Change::TextSize(size) => settings.text_size = size,
+            Change::TextScale(percent) => {
+                settings.text_scale = percent.clamp(super::MIN_TEXT_SCALE, super::MAX_TEXT_SCALE);
+            }
             Change::PreviewLines(lines) => settings.preview_lines = lines,
             Change::BoldUnread(on) => settings.bold_unread = on,
             Change::BoldSenders(on) => settings.bold_senders = on,
@@ -689,6 +693,7 @@ settable! {
         folded_calendar_accounts,
         toolbar,
         sidebar,
+        text_scale,
         // How the assistant's pane lays out its own turns belongs with the
         // rest of its settings, on the AI page.
         assistant_allowed_tools,
@@ -799,6 +804,8 @@ pub enum Effect {
     Assistant,
     /// How large the conversation's text is.
     TextSize,
+    /// The percentage applied to the interface and web views.
+    TextScale,
     /// Whether contacts supply names and photos, which rows and the open
     /// conversation show.
     Contacts,
@@ -819,7 +826,7 @@ pub enum Effect {
 impl Effect {
     /// In the order the window applies them: accounts first, because the
     /// rows and the smart mailbox on screen read what it sets.
-    pub const ALL: [Effect; 17] = [
+    pub const ALL: [Effect; 18] = [
         Effect::ListShape,
         Effect::PullToRefresh,
         Effect::Accounts,
@@ -831,6 +838,7 @@ impl Effect {
         Effect::Categories,
         Effect::Assistant,
         Effect::TextSize,
+        Effect::TextScale,
         Effect::Contacts,
         Effect::Theme,
         Effect::Language,
@@ -914,6 +922,7 @@ impl Effects {
             follow_selection_direction,
             remote_images,
             text_size,
+            text_scale: _,
             preview_lines,
             bold_unread,
             bold_senders,
@@ -1093,6 +1102,7 @@ impl Effects {
                 }
                 Effect::Toolbar => *toolbar != before.toolbar,
                 Effect::TextSize => *text_size != before.text_size,
+                Effect::TextScale => after.text_scale_percent() != before.text_scale_percent(),
                 Effect::Contacts => {
                     *contacts != before.contacts || *contact_accounts != before.contact_accounts
                 }
@@ -1737,6 +1747,7 @@ mod tests {
         after.inbox_categories = !before.inbox_categories;
         after.ai.provider = AiProvider::Local;
         after.text_size = TextSize::Small;
+        after.text_scale = 125;
         after.bold_unread = false;
         after.contact_accounts = vec!["ann@example.com".into()];
         after.color_scheme = ColorScheme::Dark;
@@ -1910,6 +1921,7 @@ mod tests {
                 },
             }),
             Change::StepTextSize(1),
+            Change::TextScale(125),
             Change::AccountContacts {
                 email: "ann@example.com".into(),
                 on: true,

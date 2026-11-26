@@ -9,7 +9,7 @@ use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 
 use adw::prelude::*;
-use gtk::{gio, glib};
+use gtk::{gdk, gio, glib, pango};
 use ksni::TrayMethods;
 use mailrs_domain::translate::{fill, gettext};
 use mailrs_domain::{Account, AccountId, Address, ChangeEvent, Label, Provider};
@@ -21,7 +21,7 @@ use crate::compose::Identity;
 use crate::core::Core;
 use crate::notify;
 use crate::permission::{Occasion, Permission};
-use crate::settings::{Change, ColorScheme, Effect, Effects, Settings};
+use crate::settings::{Change, ColorScheme, Effect, Effects, MIN_TEXT_SCALE, Settings};
 use crate::tray::{AccountUnread, MailTray, TrayCommand};
 use crate::ui::autocomplete::Contacts;
 use crate::ui::composer::spell;
@@ -121,6 +121,7 @@ pub struct App {
     /// own and were asked about it this run, so the minute timer asks once.
     asked_to_replace: RefCell<std::collections::HashSet<AccountId>>,
     settings: RefCell<Settings>,
+    applied_text_scale: Cell<i32>,
     /// Writes each saved change off the main thread.
     settings_saver: crate::settings::Saver,
     /// Where an unreadable settings file went, until the first window says
@@ -224,6 +225,7 @@ impl App {
                 contacts: core_demo,
                 ..opened.settings
             }),
+            applied_text_scale: Cell::new(MIN_TEXT_SCALE),
             settings_saver: crate::settings::Saver::new(settings_path),
             settings_broken: RefCell::new(opened.broken),
             contacts: Rc::new(RefCell::new(Rc::new(Vec::new()))),
@@ -379,6 +381,9 @@ impl App {
         if effects.has(Effect::Theme) {
             self.apply_style();
         }
+        if effects.has(Effect::TextScale) {
+            self.apply_text_scale();
+        }
         if effects.has(Effect::Calendar) {
             crate::locale_time::set_week_start_setting(self.settings.borrow().week_start);
             crate::clock_format::set_preference(self.settings.borrow().calendar_clock);
@@ -407,6 +412,60 @@ impl App {
             ColorScheme::Light => adw::ColorScheme::ForceLight,
             ColorScheme::Dark => adw::ColorScheme::ForceDark,
         });
+    }
+
+    fn ensure_gtk(&self) {
+        crate::ensure_gtk();
+        self.apply_text_scale();
+    }
+
+    fn apply_text_scale(&self) {
+        if !gtk::is_initialized_main_thread() {
+            return;
+        }
+        let Some(display) = gdk::Display::default() else {
+            return;
+        };
+        let percent = self.settings_with(Settings::text_scale_percent);
+        if self.applied_text_scale.replace(percent) == percent {
+            return;
+        }
+        let factor = f64::from(percent) / 100.0;
+        let settings = gtk::Settings::for_display(&display);
+        {
+            let _notify = settings.freeze_notify();
+            // Read the desktop baseline again so successive changes never compound.
+            settings.reset_property("gtk-font-name");
+            if percent != MIN_TEXT_SCALE
+                && let Some(name) = settings.gtk_font_name()
+            {
+                let mut font = pango::FontDescription::from_string(&name);
+                let size = f64::from(font.size()) * factor;
+                if font.is_size_absolute() {
+                    font.set_absolute_size(size);
+                } else {
+                    font.set_size(size.round() as i32);
+                }
+                settings.set_gtk_font_name(Some(&font.to_string()));
+            }
+        }
+        // Sizes specified in pixels in the app stylesheet need the same factor.
+        thread_local! {
+            static FONT_CSS: std::cell::OnceCell<gtk::CssProvider> = const { std::cell::OnceCell::new() };
+        }
+        FONT_CSS.with(|css| {
+            css.get_or_init(|| {
+                let provider = gtk::CssProvider::new();
+                gtk::style_context_add_provider_for_display(
+                    &display,
+                    &provider,
+                    gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+                );
+                provider
+            })
+            .load_from_string(&format!(":root {{ --mailrs-text-scale: {factor}; }}"));
+        });
+        crate::web::set_text_scale(factor);
     }
 
     /// Marks the unread mail in every account's inbox read, the tray's
@@ -443,7 +502,7 @@ impl App {
     }
 
     pub fn show_window(self: &Rc<Self>) -> Rc<MainWindow> {
-        crate::ensure_gtk();
+        self.ensure_gtk();
         self.apply_style();
         self.core.set_window_open(true);
         if let Some(window) = self.window.borrow().as_ref() {

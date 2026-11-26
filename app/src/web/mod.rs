@@ -15,6 +15,8 @@
 //! [`holds_focus`]; and [`prepare`], which `main` calls before anything
 //! else. A caller never names the engine beneath.
 
+use std::cell::{Cell, RefCell};
+
 #[cfg(target_os = "macos")]
 mod macos;
 #[cfg(target_os = "macos")]
@@ -26,3 +28,41 @@ pub use webkitgtk::*;
 
 #[cfg(any(target_os = "macos", test))]
 pub(crate) mod frame;
+
+thread_local! {
+    static TEXT_SCALE: Cell<f64> = const { Cell::new(1.0) };
+    static PAGES: RefCell<Vec<WeakWebView>> = const { RefCell::new(Vec::new()) };
+}
+
+/// Scales open pages, including previews, while keeping each page's own zoom.
+pub fn set_text_scale(factor: f64) {
+    let old = TEXT_SCALE.replace(factor);
+    let pages = PAGES.with_borrow_mut(|pages| {
+        let mut live = Vec::new();
+        pages.retain(|weak| {
+            let Some(page) = weak.upgrade() else {
+                return false;
+            };
+            live.push(page);
+            true
+        });
+        live
+    });
+    for page in pages {
+        page.set_page_zoom(page.zoom() / old * factor);
+    }
+}
+
+impl WebView {
+    fn register_for_text_scale(&self) {
+        self.set_zoom(1.0);
+        PAGES.with_borrow_mut(|pages| {
+            pages.retain(|weak| weak.upgrade().is_some());
+            pages.push(self.downgrade());
+        });
+    }
+
+    pub fn set_zoom(&self, zoom: f64) {
+        self.set_page_zoom(zoom * TEXT_SCALE.get());
+    }
+}

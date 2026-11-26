@@ -202,7 +202,9 @@ impl WebView {
         *inner.bridge.ivars().owner.borrow_mut() = Rc::downgrade(&inner);
         place::follow(&inner);
         events::register(&inner);
-        WebView(inner)
+        let page = WebView(inner);
+        page.register_for_text_scale();
+        page
     }
 
     /// The widget that takes the page's place in a window.
@@ -304,7 +306,7 @@ impl WebView {
         unsafe { self.0.view.pageZoom() }
     }
 
-    pub fn set_zoom(&self, zoom: f64) {
+    pub(super) fn set_page_zoom(&self, zoom: f64) {
         unsafe { self.0.view.setPageZoom(zoom) };
     }
 

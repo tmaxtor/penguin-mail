@@ -40,7 +40,7 @@ impl App {
     /// Opens `path` as a loose message, acting as the default account,
     /// or says why the file will not open.
     pub(super) fn open_mail_file(self: &Rc<Self>, path: &Path) {
-        crate::ensure_gtk();
+        self.ensure_gtk();
         self.apply_style();
         let path = path.to_path_buf();
         let (this, hold) = (Rc::clone(self), self.gio.hold());

@@ -23,6 +23,9 @@ pub(crate) use sidebar::reorder_siblings;
 pub use sidebar::{FavoriteMailbox, SidebarLayout};
 pub use signatures::SignatureMode;
 
+pub const MIN_TEXT_SCALE: i32 = 100;
+pub const MAX_TEXT_SCALE: i32 = 200;
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Settings {
@@ -33,6 +36,7 @@ pub struct Settings {
     pub follow_selection_direction: bool,
     pub remote_images: RemoteImages,
     pub text_size: TextSize,
+    pub text_scale: i32,
     pub preview_lines: PreviewLines,
     pub bold_unread: bool,
     pub bold_senders: bool,
@@ -515,6 +519,7 @@ impl Default for Settings {
             follow_selection_direction: true,
             remote_images: RemoteImages::Ask,
             text_size: TextSize::Normal,
+            text_scale: MIN_TEXT_SCALE,
             preview_lines: PreviewLines::Two,
             bold_unread: true,
             bold_senders: false,
@@ -1016,6 +1021,10 @@ fn allowed_tools<'de, D: serde::Deserializer<'de>>(read: D) -> Result<Vec<String
 }
 
 impl Settings {
+    pub fn text_scale_percent(&self) -> i32 {
+        self.text_scale.clamp(MIN_TEXT_SCALE, MAX_TEXT_SCALE)
+    }
+
     /// Whether Penguin Mail reads this account's Google contacts.
     pub fn reads_contacts(&self, email: &str) -> bool {
         let email = email.to_lowercase();

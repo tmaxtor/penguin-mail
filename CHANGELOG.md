@@ -42,6 +42,8 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ### Improved
 
+- Increase text across Penguin Mail from 100% to 200% in Appearance preferences.
+
 - Paste clipboard images into a draft with Paste or Cmd/Ctrl+V, and open attached files from their rows before sending.
 
 - Deleting a conversation from a smart mailbox asks before also moving matching sent messages to Trash, with a separate remember choice for each smart mailbox.

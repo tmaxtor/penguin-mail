@@ -11,6 +11,13 @@ falls back to the other side. A new mailbox starts by choosing the next row.
 Turn off **Follow Navigation After Removing Mail** in Reading preferences
 to always prefer the next row.
 
+## Text size
+
+In Appearance preferences, **Global Text Size (%)** takes any whole
+percentage from 100 to 200. Type a value and press Enter, or use the
+arrow keys to change it. The interface and message views update as you
+change the value, and the app remembers it between starts.
+
 ## Names
 
 Every control a person acts on carries a name in the accessible tree. A
