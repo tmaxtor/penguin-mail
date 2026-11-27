@@ -344,7 +344,13 @@ impl Request {
         let bytes = glib::Bytes::from_owned(bytes);
         let length = i64::try_from(bytes.len()).unwrap_or(-1);
         let stream = gio::MemoryInputStream::from_bytes(&bytes);
-        self.0.finish(&stream, length, Some(mime));
+        let response = webkit::URISchemeResponse::new(&stream, length);
+        response.set_content_type(mime);
+        // Inline pictures belong to the open thread and can come from decryption.
+        let headers = webkit::soup::MessageHeaders::new(webkit::soup::MessageHeadersType::Response);
+        headers.append("Cache-Control", "no-store");
+        response.set_http_headers(headers);
+        self.0.finish_with_response(&response);
     }
 
     /// Says there is nothing at that address.
@@ -404,31 +410,41 @@ pub(crate) fn check_scheme_after_last_view_closes() {
     use std::time::Duration;
 
     glib::MainContext::default().block_on(async {
-        let page = WebView::sealed();
-        assert_eq!(
-            page.view
-                .context()
-                .expect("a page has a context")
-                .cache_model(),
-            webkit::CacheModel::DocumentViewer,
-            "local mail pages must not retain a browser's cache"
-        );
-        drop(page);
         for _ in 0..3 {
-            let received = Rc::new(Cell::new(false));
+            let received = Rc::new(Cell::new(0));
             let answer = received.clone();
             let page = WebView::reading("mailrs-reopen-check", move |request| {
-                answer.set(true);
-                request.refuse();
+                answer.set(answer.get() + 1);
+                request.finish(
+                    b"<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/>",
+                    "image/svg+xml",
+                );
             });
-            page.load_html("<img src='mailrs-reopen-check:picture'>");
-            for _ in 0..100 {
-                if received.get() {
-                    break;
+            assert_eq!(
+                page.view.context().unwrap().cache_model(),
+                webkit::CacheModel::DocumentBrowser
+            );
+            assert!(page.view.network_session().unwrap().is_ephemeral());
+            let loaded = Rc::new(Cell::new(false));
+            let done = loaded.clone();
+            page.on_loaded(move || done.set(true));
+            let image = "<img src='mailrs-reopen-check:picture'>";
+            for html in [image, "<p>Another message</p>", image] {
+                loaded.set(false);
+                page.load_html(html);
+                for _ in 0..100 {
+                    if loaded.get() {
+                        break;
+                    }
+                    glib::timeout_future(Duration::from_millis(50)).await;
                 }
-                glib::timeout_future(Duration::from_millis(50)).await;
+                assert!(loaded.get(), "the page finished loading");
             }
-            assert!(received.get(), "the new view receives its scheme request");
+            assert_eq!(
+                received.get(),
+                2,
+                "the view serves the picture on each visit"
+            );
             let weak = page.downgrade();
             drop(page);
             for _ in 0..100 {
@@ -550,7 +566,8 @@ fn context() -> webkit::WebContext {
             let context = webkit::WebContext::builder()
                 .memory_pressure_settings(&pressure)
                 .build();
-            context.set_cache_model(webkit::CacheModel::DocumentViewer);
+            // Reuse fresh remote resources when the reader returns to a message.
+            context.set_cache_model(webkit::CacheModel::DocumentBrowser);
             #[cfg(feature = "packaging-appimage")]
             context.add_path_to_sandbox(
                 crate::appimage::root().expect("AppImage root is configured"),

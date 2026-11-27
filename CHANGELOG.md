@@ -42,6 +42,8 @@ the [releases page](https://github.com/c9dev/penguin-mail/releases).
 
 ### Improved
 
+- On Linux, reopening a message can reuse remote images in memory while the app is running.
+
 - Increase text across Penguin Mail from 100% to 200% in Appearance preferences.
 
 - Paste clipboard images into a draft with Paste or Cmd/Ctrl+V, and open attached files from their rows before sending.
